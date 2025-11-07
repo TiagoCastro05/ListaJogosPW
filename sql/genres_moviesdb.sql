@@ -1,0 +1,1 @@
+INSERT INTO genres(id,genre) VALUES(1,'Comedy'),(2,'Fantasy'),(3,'Crime'),(4,'Drama'),(5,'Music'),(6,'Adventure'),(7,'History'),(8,'Thriller'),(9,'Animation'),(10,'Family'),(11,'Mystery'),(12,'Biography'),(13,'Action'),(14,'Film-Noir'),(15,'Romance'),(16,'Sci-Fi'),(17,'War'),(18,'Western'),(19,'Horror'),(20,'Musical'),(21,'Sport');
