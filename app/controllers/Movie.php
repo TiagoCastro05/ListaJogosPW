@@ -36,6 +36,8 @@ class Movie extends Controller {
 
   public function create() {
     $Movies = $this->model('Movies');
+    $Consoles = $this->model('Consoles');
+    $Genres = $this->model('Genres');
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $newMovieData = [
@@ -45,16 +47,33 @@ class Movie extends Controller {
         'game_image' => $_POST['game_image']
       ];
       $info = $Movies::addMovie($newMovieData);
+      
+      // Obter o ID do jogo inserido
+      $jogoId = $info['id'];
+      
+      // Adicionar consolas se selecionadas
+      if (isset($_POST['consoles']) && is_array($_POST['consoles'])) {
+        $Movies::addGameConsoles($jogoId, $_POST['consoles']);
+      }
+      
+      // Adicionar géneros se selecionados
+      if (isset($_POST['genres']) && is_array($_POST['genres'])) {
+        $Movies::addGameGenres($jogoId, $_POST['genres']);
+      }
 
       $data = $Movies::getAllMovies();
       $this->view('movie/index', ['movies' => $data, 'info' => $info, 'type' => 'INSERT']);
     } else {
-      $this->view('movie/create');
+      $consoles = $Consoles::getAllConsoles();
+      $genres = $Genres::getAllGenres();
+      $this->view('movie/create', ['consoles' => $consoles, 'genres' => $genres]);
     }
   }
 
   public function update($id = null) {
     $Movies = $this->model('Movies');
+    $Consoles = $this->model('Consoles');
+    $Genres = $this->model('Genres');
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $updatedMovieData = [
@@ -65,11 +84,35 @@ class Movie extends Controller {
       ];
       $info = $Movies::updateMovie($id, $updatedMovieData);
       
+      // Remover consolas e géneros antigos
+      $Movies::removeGameConsoles($id);
+      $Movies::removeGameGenres($id);
+      
+      // Adicionar consolas se selecionadas
+      if (isset($_POST['consoles']) && is_array($_POST['consoles'])) {
+        $Movies::addGameConsoles($id, $_POST['consoles']);
+      }
+      
+      // Adicionar géneros se selecionados
+      if (isset($_POST['genres']) && is_array($_POST['genres'])) {
+        $Movies::addGameGenres($id, $_POST['genres']);
+      }
+      
       $data = $Movies::getAllMovies();
       $this->view('movie/index', ['movies' => $data, 'info' => $info, 'type' => 'UPDATE']);
     } else {
       $data = $Movies::findMovieById($id);
-      $this->view('movie/update', ['movie' => $data]);
+      $consoles = $Consoles::getAllConsoles();
+      $genres = $Genres::getAllGenres();
+      $selectedConsoles = $Movies::getGameConsoles($id);
+      $selectedGenres = $Movies::getGameGenres($id);
+      $this->view('movie/update', [
+        'movie' => $data, 
+        'consoles' => $consoles, 
+        'genres' => $genres,
+        'selectedConsoles' => $selectedConsoles,
+        'selectedGenres' => $selectedGenres
+      ]);
     }
   }
 

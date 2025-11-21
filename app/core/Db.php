@@ -52,27 +52,39 @@ class Db {
   public function execQuery(string $sql, array $parameters = []) {
       $stmt = $this->conn->prepare($sql);
       $this->setParameters($stmt, $parameters);
-      if (!(stripos(trim($sql), 'DELETE') === 0)) {
-        $stmt->execute();
-      }
-
+      
       if (stripos(trim($sql), 'SELECT') === 0) { 
+          $stmt->execute();
           $response = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
       } elseif (stripos(trim($sql), 'INSERT') === 0) { 
+          $stmt->execute();
           $lastId = $this->conn->insert_id; // ID do registo inserido
-          $result = $this->execQuery('SELECT * FROM movies WHERE id = ?', ['i', [$lastId]]); 
-          $response = $result[0];
+          // Apenas buscar dados se for uma inserção na tabela jogos
+          if (stripos($sql, 'jogos') !== false && stripos($sql, 'jogo_') === false) {
+            $result = $this->execQuery('SELECT * FROM jogos WHERE id = ?', ['i', [$lastId]]); 
+            $response = $result[0];
+          } else {
+            $response = ['id' => $lastId];
+          }
       } elseif (stripos(trim($sql), 'UPDATE') === 0) { 
+          $stmt->execute();
           $response = $parameters[1]; // devolve os dados enviados para o execQuery (não há necessidade de ir buscar à BD)
       } elseif (stripos(trim($sql), 'DELETE') === 0) {
-          $id = $parameters[1][0]; // id do registo para DELETE
-          $deletedData = $this->execQuery('SELECT * FROM movies WHERE id = ?', ['i', [$id]]);
-          if (!empty($deletedData)) {
-            $response = $deletedData[0];
+          // Para DELETE de relações, apenas executar
+          if (stripos($sql, 'jogo_consoles') !== false || stripos($sql, 'jogo_genres') !== false) {
+            $stmt->execute();
+            $response = true;
           } else {
-            $response = null;
+            // Para DELETE de jogos, buscar dados antes de deletar
+            $id = $parameters[1][0]; // id do registo para DELETE
+            $deletedData = $this->execQuery('SELECT * FROM jogos WHERE id = ?', ['i', [$id]]);
+            if (!empty($deletedData)) {
+              $response = $deletedData[0];
+            } else {
+              $response = null;
+            }
+            $stmt->execute();
           }
-          $stmt->execute();
       }
 
       return $response;

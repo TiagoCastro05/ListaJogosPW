@@ -77,6 +77,48 @@ class Movies {
     return $response;
   }
 
+  /**
+  * Método para adicionar consolas a um jogo
+  * @param    int     $jogoId      Id. do jogo
+  * @param    array   $consoleIds  Array de IDs das consolas
+  */
+  public static function addGameConsoles(int $jogoId, array $consoleIds) {
+    $conn = new Db();
+    foreach ($consoleIds as $consoleId) {
+      $conn->execQuery('INSERT INTO jogo_consoles (jogo_id, console_id) VALUES (?, ?)', array('ii', array($jogoId, $consoleId)));
+    }
+  }
+
+  /**
+  * Método para adicionar géneros a um jogo
+  * @param    int     $jogoId    Id. do jogo
+  * @param    array   $genreIds  Array de IDs dos géneros
+  */
+  public static function addGameGenres(int $jogoId, array $genreIds) {
+    $conn = new Db();
+    foreach ($genreIds as $genreId) {
+      $conn->execQuery('INSERT INTO jogo_genres (jogo_id, genre_id) VALUES (?, ?)', array('ii', array($jogoId, $genreId)));
+    }
+  }
+
+  /**
+  * Método para remover todas as consolas de um jogo
+  * @param    int     $jogoId   Id. do jogo
+  */
+  public static function removeGameConsoles(int $jogoId) {
+    $conn = new Db();
+    $conn->execQuery('DELETE FROM jogo_consoles WHERE jogo_id = ?', array('i', array($jogoId)));
+  }
+
+  /**
+  * Método para remover todos os géneros de um jogo
+  * @param    int     $jogoId   Id. do jogo
+  */
+  public static function removeGameGenres(int $jogoId) {
+    $conn = new Db();
+    $conn->execQuery('DELETE FROM jogo_genres WHERE jogo_id = ?', array('i', array($jogoId)));
+  }
+
   
 
 }
