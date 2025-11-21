@@ -25,10 +25,10 @@ class Movie extends Controller {
   public function get($id = null) {
     if (is_numeric($id)) {
       $Movies = $this->model('Movies');
-      $Genres = $this->model('Genres'); 
       $data = $Movies::findMovieById($id);
-      $genres = $Genres::getAllGenres();
-      $this->view('movie/get', ['movies' => $data, 'genres' => $genres]);
+      $consoles = $Movies::getGameConsoles($id);
+      $genres = $Movies::getGameGenres($id);
+      $this->view('movie/get', ['movies' => $data, 'consoles' => $consoles, 'genres' => $genres]);
     } else {
        $this->pageNotFound();
     }
@@ -36,35 +36,32 @@ class Movie extends Controller {
 
   public function create() {
     $Movies = $this->model('Movies');
-    $Genres = $this->model('Genres'); 
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $newMovieData = [
         'title' => $_POST['title'],
-        'imdb_rating' => $_POST['imdb_rating'],
+        'metacritic_rating' => $_POST['metacritic_rating'],
         'release_year' => $_POST['release_year'],
-        'genres_id' => $_POST['genres_id']
+        'game_image' => $_POST['game_image']
       ];
       $info = $Movies::addMovie($newMovieData);
 
       $data = $Movies::getAllMovies();
       $this->view('movie/index', ['movies' => $data, 'info' => $info, 'type' => 'INSERT']);
     } else {
-      $genres = $Genres::getAllGenres();
-      $this->view('movie/create', ['genres' => $genres]);
+      $this->view('movie/create');
     }
   }
 
   public function update($id = null) {
     $Movies = $this->model('Movies');
-    $Genres = $this->model('Genres');
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $updatedMovieData = [
         'title' => $_POST['title'],
-        'imdb_rating' => $_POST['imdb_rating'],
+        'metacritic_rating' => $_POST['metacritic_rating'],
         'release_year' => $_POST['release_year'],
-        'genres_id' => $_POST['genres_id']
+        'game_image' => $_POST['game_image']
       ];
       $info = $Movies::updateMovie($id, $updatedMovieData);
       
@@ -72,8 +69,7 @@ class Movie extends Controller {
       $this->view('movie/index', ['movies' => $data, 'info' => $info, 'type' => 'UPDATE']);
     } else {
       $data = $Movies::findMovieById($id);
-      $genres = $Genres::getAllGenres(); 
-      $this->view('movie/update', ['movie' => $data, 'genres' => $genres]);
+      $this->view('movie/update', ['movie' => $data]);
     }
   }
 

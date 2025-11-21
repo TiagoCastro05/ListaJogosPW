@@ -1,4 +1,4 @@
-<h2>Lista de Filmes</h2>
+<h2>Lista de Jogos</h2>
 <a href="<?php echo $url_alias;?>/movie/create">NOVO</a>
 
 <?php
@@ -9,13 +9,13 @@ if (isset($data['info']) && isset($data['type'])) {
   $type = $data['type'];
   switch ($type) {
     case 'INSERT':
-      echo '<h3>Filme - ' . $data['info']['title'] . ' - inserido com sucesso.</h3>';
+      echo '<h3>Jogo - ' . $data['info']['title'] . ' - inserido com sucesso.</h3>';
       break;
     case 'UPDATE':
-      echo '<h3>A informação do filme - ' . $data['info'][0] . ' - foi atualizada.</h3>';
+      echo '<h3>A informação do jogo - ' . $data['info'][0] . ' - foi atualizada.</h3>';
       break;
     case 'DELETE':
-      echo '<h3>O filme - ' . $data['info']['title'] . ' - foi eliminado.</h3>';
+      echo '<h3>O jogo - ' . $data['info']['title'] . ' - foi eliminado.</h3>';
       break;
   }
 }

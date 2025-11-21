@@ -6,9 +6,10 @@ class Genres {
 
   public static function getAllGenres() {
     $conn = new Db();
-    $response = $conn->execQuery('SELECT id, genre FROM genres');
+    $response = $conn->execQuery('SELECT id, console_name FROM consoles');
     return $response;
   }
 
 }
 ?>
+  
