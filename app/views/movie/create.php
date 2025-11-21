@@ -1,98 +1,57 @@
-<h2>Criar Novo Jogo</h2>
+<link rel="stylesheet" href="<?php echo $url_alias;?>/assets/css/main.css">
 
-<style>
-.custom-dropdown {
-  position: relative;
-  width: 300px;
-  margin-bottom: 20px;
-}
+<div class="container">
+  <h2>➕ Criar Novo Jogo</h2>
 
-.dropdown-button {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  background: white;
-  text-align: left;
-  cursor: pointer;
-  border-radius: 4px;
-}
+  <form action="<?php echo $url_alias;?>/movie/create" method="POST">
+    <label for="title">Título: *</label>
+    <input type="text" id="title" name="title" required placeholder="Ex: The Legend of Zelda">
 
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: white;
-  width: 100%;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  max-height: 200px;
-  overflow-y: auto;
-  z-index: 1000;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
+    <label for="metacritic_rating">Metacritic Rating:</label>
+    <input type="text" id="metacritic_rating" name="metacritic_rating" placeholder="Ex: 95">
 
-.dropdown-content.show {
-  display: block;
-}
+    <label for="release_year">Ano de Lançamento:</label>
+    <input type="text" id="release_year" name="release_year" placeholder="Ex: 2023">
 
-.dropdown-item {
-  padding: 8px 12px;
-  cursor: pointer;
-}
+    <label for="game_image">URL da Imagem:</label>
+    <input type="text" id="game_image" name="game_image" placeholder="https://exemplo.com/imagem.jpg">
 
-.dropdown-item:hover {
-  background-color: #f0f0f0;
-}
-
-.dropdown-item input[type="checkbox"] {
-  margin-right: 8px;
-}
-</style>
-
-<form action="<?php echo $url_alias;?>/movie/create" method="POST">
-  <label for="title">Título:</label>
-  <input type="text" id="title" name="title" required><br>
-
-  <label for="metacritic_rating">Metacritic Rating:</label>
-  <input type="text" id="metacritic_rating" name="metacritic_rating"><br>
-
-  <label for="release_year">Ano de Lançamento:</label>
-  <input type="text" id="release_year" name="release_year"><br>
-
-  <label for="game_image">URL da Imagem:</label>
-  <input type="text" id="game_image" name="game_image"><br>
-
-  <label>Consolas:</label>
-  <div class="custom-dropdown">
-    <div class="dropdown-button" onclick="toggleDropdown('consoles-dropdown')">
-      <span id="consoles-selected">Selecione as consolas</span>
+    <label>Consolas:</label>
+    <div class="custom-dropdown">
+      <div class="dropdown-button" onclick="toggleDropdown('consoles-dropdown')">
+        <span id="consoles-selected">Selecione as consolas</span>
+      </div>
+      <div id="consoles-dropdown" class="dropdown-content">
+        <?php foreach ($data['consoles'] as $console) { ?>
+          <div class="dropdown-item">
+            <input type="checkbox" name="consoles[]" value="<?php echo $console['id']; ?>" id="console_<?php echo $console['id']; ?>" onchange="updateSelectedText('consoles')">
+            <label for="console_<?php echo $console['id']; ?>"><?php echo $console['console_name']; ?></label>
+          </div>
+        <?php } ?>
+      </div>
     </div>
-    <div id="consoles-dropdown" class="dropdown-content">
-      <?php foreach ($data['consoles'] as $console) { ?>
-        <div class="dropdown-item">
-          <input type="checkbox" name="consoles[]" value="<?php echo $console['id']; ?>" id="console_<?php echo $console['id']; ?>" onchange="updateSelectedText('consoles')">
-          <label for="console_<?php echo $console['id']; ?>"><?php echo $console['console_name']; ?></label>
-        </div>
-      <?php } ?>
-    </div>
-  </div>
 
-  <label>Géneros:</label>
-  <div class="custom-dropdown">
-    <div class="dropdown-button" onclick="toggleDropdown('genres-dropdown')">
-      <span id="genres-selected">Selecione os géneros</span>
+    <label>Géneros:</label>
+    <div class="custom-dropdown">
+      <div class="dropdown-button" onclick="toggleDropdown('genres-dropdown')">
+        <span id="genres-selected">Selecione os géneros</span>
+      </div>
+      <div id="genres-dropdown" class="dropdown-content">
+        <?php foreach ($data['genres'] as $genre) { ?>
+          <div class="dropdown-item">
+            <input type="checkbox" name="genres[]" value="<?php echo $genre['id']; ?>" id="genre_<?php echo $genre['id']; ?>" onchange="updateSelectedText('genres')">
+            <label for="genre_<?php echo $genre['id']; ?>"><?php echo $genre['genre']; ?></label>
+          </div>
+        <?php } ?>
+      </div>
     </div>
-    <div id="genres-dropdown" class="dropdown-content">
-      <?php foreach ($data['genres'] as $genre) { ?>
-        <div class="dropdown-item">
-          <input type="checkbox" name="genres[]" value="<?php echo $genre['id']; ?>" id="genre_<?php echo $genre['id']; ?>" onchange="updateSelectedText('genres')">
-          <label for="genre_<?php echo $genre['id']; ?>"><?php echo $genre['genre']; ?></label>
-        </div>
-      <?php } ?>
-    </div>
-  </div>
 
-  <button type="submit">Criar Jogo</button>
-</form>
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+      <button type="submit">✅ Criar Jogo</button>
+      <a href="<?php echo $url_alias;?>/movie" class="btn" style="background: #6c757d;">❌ Cancelar</a>
+    </div>
+  </form>
+</div>
 
 <script>
 function toggleDropdown(id) {
@@ -114,7 +73,7 @@ function updateSelectedText(type) {
 
 // Fechar dropdown ao clicar fora
 window.onclick = function(event) {
-  if (!event.target.matches('.dropdown-button') && !event.target.closest('.dropdown-content')) {
+  if (!event.target.matches('.dropdown-button') && !event.target.matches('.dropdown-button span') && !event.target.closest('.dropdown-content')) {
     var dropdowns = document.getElementsByClassName('dropdown-content');
     for (var i = 0; i < dropdowns.length; i++) {
       dropdowns[i].classList.remove('show');

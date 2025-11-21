@@ -1,68 +1,60 @@
-<pre>
-<?php 
-// debug
-// print_r($data);
-?>
-</pre>
+<link rel="stylesheet" href="<?php echo $url_alias;?>/assets/css/main.css">
 
-<?php
-if (count($data['movies']) == 0) {
-?>
-  <h1>O jogo não existe na nossa base de dados...</h1>
-<?php 
-} else {
-?>
-
-  <div>
+<div class="container">
   <?php
-  echo "Nome: " . $data['movies'][0]['title'];
+  if (count($data['movies']) == 0) {
   ?>
-  </div>
-
-  <div>
-  <?php
-  echo "Metacritic: " . $data['movies'][0]['metacritic_rating'];
+    <h2>❌ Jogo não encontrado</h2>
+    <p>O jogo não existe na nossa base de dados...</p>
+  <?php 
+  } else {
   ?>
-  </div>
+    <h1><?php echo $data['movies'][0]['title']; ?></h1>
+    
+    <div class="game-details">
+      <?php if (!empty($data['movies'][0]['game_image'])) { ?>
+        <div style="text-align: center;">
+          <img src="<?php echo $data['movies'][0]['game_image']; ?>" alt="<?php echo $data['movies'][0]['title']; ?>" style="max-width: 400px; width: 100%;">
+        </div>
+      <?php } ?>
+      
+      <div>
+        <strong>🎯 Metacritic:</strong> <?php echo $data['movies'][0]['metacritic_rating'] ?: 'N/A'; ?>
+      </div>
 
-  <div>
-  <?php
-  echo "Ano: " . $data['movies'][0]['release_year'];
-  ?>
-  </div>
+      <div>
+        <strong>📅 Ano de Lançamento:</strong> <?php echo $data['movies'][0]['release_year'] ?: 'N/A'; ?>
+      </div>
 
-  <div>
-  <?php
-  if (!empty($data['movies'][0]['game_image'])) {
-    echo '<img src="' . $data['movies'][0]['game_image'] . '" alt="' . $data['movies'][0]['title'] . '" style="max-width: 300px;">';
+      <?php if (!empty($data['consoles']) && count($data['consoles']) > 0) { ?>
+        <div>
+          <strong>🎮 Consolas:</strong> 
+          <?php
+          $console_names = array_map(function($console) {
+            return $console['console_name'];
+          }, $data['consoles']);
+          echo implode(', ', $console_names);
+          ?>
+        </div>
+      <?php } ?>
+
+      <?php if (!empty($data['genres']) && count($data['genres']) > 0) { ?>
+        <div>
+          <strong>🎬 Géneros:</strong> 
+          <?php
+          $genre_names = array_map(function($genre) {
+            return $genre['genre'];
+          }, $data['genres']);
+          echo implode(', ', $genre_names);
+          ?>
+        </div>
+      <?php } ?>
+    </div>
+  <?php 
   }
   ?>
+  
+  <div style="margin-top: 30px; text-align: center;">
+    <a href="<?php echo $url_alias;?>/movie" class="btn">← Voltar à Lista</a>
   </div>
-
-  <div>
-  <?php
-  if (!empty($data['consoles']) && count($data['consoles']) > 0) {
-    echo "<strong>Consolas:</strong> ";
-    $console_names = array_map(function($console) {
-      return $console['console_name'];
-    }, $data['consoles']);
-    echo implode(', ', $console_names);
-  }
-  ?>
-  </div>
-
-  <div>
-  <?php
-  if (!empty($data['genres']) && count($data['genres']) > 0) {
-    echo "<strong>Géneros:</strong> ";
-    $genre_names = array_map(function($genre) {
-      return $genre['genre'];
-    }, $data['genres']);
-    echo implode(', ', $genre_names);
-  }
-  ?>
-  </div>
-<?php 
-}
-?>
-<a href="<?php echo $url_alias;?>/movie">Voltar</a>
+</div>
