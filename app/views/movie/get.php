@@ -1,6 +1,11 @@
 <link rel="stylesheet" href="<?php echo $url_alias;?>/assets/css/main.css">
 
 <div class="container">
+  <div style="margin-bottom: 20px;">
+    <a href="/jogosapp/" class="btn btn-home">🏠 Início</a>
+    <a href="<?php echo $url_alias;?>/movie" class="btn btn-secondary">← Voltar à Lista</a>
+  </div>
+  
   <?php
   if (count($data['movies']) == 0) {
   ?>
@@ -54,7 +59,8 @@
   }
   ?>
   
-  <div style="margin-top: 30px; text-align: center;">
-    <a href="<?php echo $url_alias;?>/movie" class="btn">← Voltar à Lista</a>
+  <div style="margin-top: 30px; text-align: center; display: flex; justify-content: center; gap: 10px;">
+    <a href="/jogosapp/" class="btn btn-home">🏠 Início</a>
+    <a href="<?php echo $url_alias;?>/movie" class="btn btn-secondary">← Voltar à Lista</a>
   </div>
 </div>

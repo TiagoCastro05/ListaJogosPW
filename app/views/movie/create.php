@@ -1,6 +1,11 @@
 <link rel="stylesheet" href="<?php echo $url_alias;?>/assets/css/main.css">
 
 <div class="container">
+  <div style="margin-bottom: 20px;">
+    <a href="/jogosapp/" class="btn btn-home">🏠 Início</a>
+    <a href="<?php echo $url_alias;?>/movie" class="btn btn-secondary">← Voltar à Lista</a>
+  </div>
+  
   <h2>➕ Criar Novo Jogo</h2>
 
   <form action="<?php echo $url_alias;?>/movie/create" method="POST">
@@ -47,8 +52,8 @@
     </div>
 
     <div style="display: flex; gap: 10px; margin-top: 20px;">
-      <button type="submit">✅ Criar Jogo</button>
-      <a href="<?php echo $url_alias;?>/movie" class="btn" style="background: #6c757d;">❌ Cancelar</a>
+      <button type="submit" class="btn btn-success">✅ Criar Jogo</button>
+      <a href="<?php echo $url_alias;?>/movie" class="btn btn-secondary">❌ Cancelar</a>
     </div>
   </form>
 </div>

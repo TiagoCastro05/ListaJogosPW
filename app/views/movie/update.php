@@ -10,6 +10,11 @@ $selectedGenreIds = array_map(function($g) { return $g['id']; }, $data['selected
 <link rel="stylesheet" href="<?php echo $url_alias;?>/assets/css/main.css">
 
 <div class="container">
+  <div style="margin-bottom: 20px;">
+    <a href="/jogosapp/" class="btn btn-home">🏠 Início</a>
+    <a href="<?php echo $url_alias;?>/movie" class="btn btn-secondary">← Voltar à Lista</a>
+  </div>
+  
   <h2>✏️ Editar Jogo</h2>
   
   <form action="<?php echo $url_alias;?>/movie/update/<?php echo $data['movie'][0]['id'];?>" method="POST">
@@ -60,8 +65,8 @@ $selectedGenreIds = array_map(function($g) { return $g['id']; }, $data['selected
     </div>
 
     <div style="display: flex; gap: 10px; margin-top: 20px;">
-      <button type="submit">✅ Atualizar Jogo</button>
-      <a href="<?php echo $url_alias;?>/movie" class="btn" style="background: #6c757d;">❌ Cancelar</a>
+      <button type="submit" class="btn btn-warning">✅ Atualizar Jogo</button>
+      <a href="<?php echo $url_alias;?>/movie" class="btn btn-secondary">❌ Cancelar</a>
     </div>
   </form>
 </div>
