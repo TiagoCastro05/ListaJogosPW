@@ -10,6 +10,20 @@
 //======================================================================
 namespace app\core;
 use mysqli;
+
+/**
+ * Class Db
+ * --------
+ * Pequeno wrapper para a extensão mysqli que fornece um método genérico
+ * `execQuery` para executar queries parametrizadas (prepared statements).
+ *
+ * Observações importantes:
+ * - A implementação atual tem algumas regras específicas para tratar SELECT,
+ *   INSERT, UPDATE e DELETE de forma diferente (por exemplo, devolve o registo
+ *   inserido após um INSERT se for uma tabela de jogos).
+ * - Em aplicações maiores é recomendável usar uma camada de abstração mais
+ *   robusta (PDO com tratamento de erros/transactions ou um ORM).
+ */
 class Db {
   private $DBServer;
   private $DBUser;
@@ -32,11 +46,18 @@ class Db {
   * @param  MySQLiStatement   $stmt         query "preparada".
   * @param  array             $parameters   array com tipos e respetivos valores (caso existam)
   */
+  /**
+  * Bind de parâmetros para prepared statements
+  * @param  mysqli_stmt  $stmt        statement preparado
+  * @param  array        $parameters  array no formato: [types, values]
+  *                                      - types: string com os tipos (ex: 'iss')
+  *                                      - values: array com os valores a bindar
+  */
   private function setParameters($stmt, array $parameters) {
     if (count($parameters)) {
       $types = $parameters[0];
       $values = $parameters[1];
-      $stmt->bind_param($types, ...$values); // *1
+      $stmt->bind_param($types, ...$values); // *1 - Argument unpacking (splat)
     }
   }
 
@@ -48,7 +69,26 @@ class Db {
   * @return array    $response    dataset
   */
   
-  // precisa de ser mais genérica porque, nesta versão, apenas responde corretamente para operações sobre a tabela "movies"
+  // Nota: a implementação tem regras específicas, ver comentários abaixo.
+  /**
+  * Executa uma query parametrizada usando prepared statements.
+  *
+  * Comportamento por tipo de query:
+  * - SELECT: executa e devolve array associativo com todas as linhas
+  * - INSERT: executa e devolve o registo inserido (quando a tabela for `jogos`)
+  *           ou um array com ['id' => lastInsertId]
+  * - UPDATE: executa e devolve os dados recebidos em $parameters[1]
+  * - DELETE: para relações (jogo_consoles/jogo_genres) devolve true;
+  *           para DELETE na tabela `jogos` devolve os dados do registo eliminado
+  *           (busca-os antes de apagar)
+  *
+  * Atenção: esta função assume que o array $parameters tem o formato
+  * ['types', ['val1', 'val2', ...]] quando existem parâmetros.
+  *
+  * @param  string $sql         Instrução SQL (com ? para parâmetros)
+  * @param  array  $parameters  Array de parâmetros no formato descrito acima
+  * @return mixed  Resultado dependente do tipo de query
+  */
   public function execQuery(string $sql, array $parameters = []) {
       $stmt = $this->conn->prepare($sql);
       $this->setParameters($stmt, $parameters);

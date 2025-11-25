@@ -1,10 +1,9 @@
 <?php
 namespace app\core;
-use app\models\Movies;
 
 /**
-* Classe que instancia um model e invoca uma view
-*/
+ * Classe que instancia um model e invoca uma view
+ */
 class Controller {
 
   /**

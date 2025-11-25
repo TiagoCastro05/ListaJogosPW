@@ -10,7 +10,7 @@
     <div class="container">
       <h1>🎮 Lista de Jogos</h1>
       <div style="text-align: center; margin-top: 30px;">
-        <a href="<?php echo $url_alias;?>/movie" class="btn" style="font-size: 1.2em; padding: 15px 40px;">
+        <a href="<?php echo $url_alias;?>/jogo" class="btn" style="font-size: 1.2em; padding: 15px 40px;">
           📋 Ver Lista de Jogos
         </a>
       </div>

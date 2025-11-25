@@ -104,8 +104,8 @@ NOTAS:
 =======================================================================================================
 Exemplos de URIs (em testes locais):
 http://localhost
-http://localhost/movie/ - invoca método index() do controlador Movie (listagem de todos os filmes)
-http://localhost/movie/get/5 - invoca método get() do controlador Movie (listagem de um filme)
+http://localhost/jogo/ - invoca método index() do controlador Jogo (listagem de todos os jogos)
+http://localhost/jogo/get/5 - invoca método get() do controlador Jogo (listagem de um jogo)
 
 
 Método parseURL:

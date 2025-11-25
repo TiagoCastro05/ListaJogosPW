@@ -1,25 +1,46 @@
+<?php
+// debug
+// print_r($data);
+
+// Criar arrays de IDs selecionados para facilitar a verificação no template
+$selectedConsoleIds = array_map(function($c) { return $c['id']; }, $data['selectedConsoles']);
+$selectedGenreIds = array_map(function($g) { return $g['id']; }, $data['selectedGenres']);
+?>
+
+<!--
+  View: jogo/update.php
+  ----------------------
+  Formulário de edição de um jogo.
+  - O controller (`Jogo::update`) passa em `$data`:
+    - 'jogo' => dados do jogo
+    - 'consoles' => lista de consolas
+    - 'genres' => lista de géneros
+    - 'selectedConsoles' / 'selectedGenres' => relações já associadas ao jogo
+  - O template marca os checkboxes correspondentes através dos arrays de ids criados acima.
+-->
+
 <link rel="stylesheet" href="<?php echo $url_alias;?>/assets/css/main.css">
 
 <div class="container">
   <div style="margin-bottom: 20px;">
     <a href="/jogosapp/" class="btn btn-home">🏠 Início</a>
-    <a href="<?php echo $url_alias;?>/movie" class="btn btn-secondary">← Voltar à Lista</a>
+    <a href="<?php echo $url_alias;?>/jogo" class="btn btn-secondary">← Voltar à Lista</a>
   </div>
   
-  <h2>➕ Criar Novo Jogo</h2>
-
-  <form action="<?php echo $url_alias;?>/movie/create" method="POST">
+  <h2>✏️ Editar Jogo</h2>
+  
+  <form action="<?php echo $url_alias;?>/jogo/update/<?php echo $data['jogo'][0]['id'];?>" method="POST">
     <label for="title">Título: *</label>
-    <input type="text" id="title" name="title" required placeholder="Ex: The Legend of Zelda">
+    <input type="text" id="title" name="title" value="<?php echo $data['jogo'][0]['title']; ?>" required>
 
     <label for="metacritic_rating">Metacritic Rating:</label>
-    <input type="text" id="metacritic_rating" name="metacritic_rating" placeholder="Ex: 95">
+    <input type="text" id="metacritic_rating" name="metacritic_rating" value="<?php echo $data['jogo'][0]['metacritic_rating']; ?>">
 
     <label for="release_year">Ano de Lançamento:</label>
-    <input type="text" id="release_year" name="release_year" placeholder="Ex: 2023">
+    <input type="text" id="release_year" name="release_year" value="<?php echo $data['jogo'][0]['release_year']; ?>">
 
     <label for="game_image">URL da Imagem:</label>
-    <input type="text" id="game_image" name="game_image" placeholder="https://exemplo.com/imagem.jpg">
+    <input type="text" id="game_image" name="game_image" value="<?php echo $data['jogo'][0]['game_image']; ?>">
 
     <label>Consolas: <span style="color: red;">*</span></label>
     <div class="custom-dropdown">
@@ -27,9 +48,11 @@
         <span id="consoles-selected">Selecione as consolas</span>
       </div>
       <div id="consoles-dropdown" class="dropdown-content">
-        <?php foreach ($data['consoles'] as $console) { ?>
+        <?php foreach ($data['consoles'] as $console) { 
+          $isChecked = in_array($console['id'], $selectedConsoleIds) ? 'checked' : '';
+        ?>
           <div class="dropdown-item">
-            <input type="checkbox" name="consoles[]" value="<?php echo $console['id']; ?>" id="console_<?php echo $console['id']; ?>" onchange="updateSelectedText('consoles')">
+            <input type="checkbox" name="consoles[]" value="<?php echo $console['id']; ?>" id="console_<?php echo $console['id']; ?>" <?php echo $isChecked; ?> onchange="updateSelectedText('consoles')">
             <label for="console_<?php echo $console['id']; ?>"><?php echo $console['console_name']; ?></label>
           </div>
         <?php } ?>
@@ -43,9 +66,11 @@
         <span id="genres-selected">Selecione os géneros</span>
       </div>
       <div id="genres-dropdown" class="dropdown-content">
-        <?php foreach ($data['genres'] as $genre) { ?>
+        <?php foreach ($data['genres'] as $genre) { 
+          $isChecked = in_array($genre['id'], $selectedGenreIds) ? 'checked' : '';
+        ?>
           <div class="dropdown-item">
-            <input type="checkbox" name="genres[]" value="<?php echo $genre['id']; ?>" id="genre_<?php echo $genre['id']; ?>" onchange="updateSelectedText('genres')">
+            <input type="checkbox" name="genres[]" value="<?php echo $genre['id']; ?>" id="genre_<?php echo $genre['id']; ?>" <?php echo $isChecked; ?> onchange="updateSelectedText('genres')">
             <label for="genre_<?php echo $genre['id']; ?>"><?php echo $genre['genre']; ?></label>
           </div>
         <?php } ?>
@@ -54,18 +79,25 @@
     <div id="genres-error" style="color: red; font-size: 12px; margin-bottom: 15px; display: none;">Selecione pelo menos um género</div>
 
     <div style="display: flex; gap: 10px; margin-top: 20px;">
-      <button type="submit" class="btn btn-success" onclick="return validateForm()">✅ Criar Jogo</button>
-      <a href="<?php echo $url_alias;?>/movie" class="btn btn-secondary">❌ Cancelar</a>
+      <button type="submit" class="btn btn-warning" onclick="return validateForm()">✅ Atualizar Jogo</button>
+      <a href="<?php echo $url_alias;?>/jogo" class="btn btn-secondary">❌ Cancelar</a>
     </div>
   </form>
 </div>
 
 <script>
+/**
+ * Toggle do dropdown (consoles/genres)
+ */
 function toggleDropdown(id) {
   var dropdown = document.getElementById(id);
   dropdown.classList.toggle('show');
 }
 
+/**
+ * updateSelectedText(type)
+ * - Actualiza o texto do botão do dropdown com as opções seleccionadas.
+ */
 function updateSelectedText(type) {
   var checkboxes = document.querySelectorAll('input[name="' + type + '[]"]');
   var selected = [];
@@ -77,12 +109,16 @@ function updateSelectedText(type) {
   var text = selected.length > 0 ? selected.join(', ') : 'Selecione os ' + type;
   document.getElementById(type + '-selected').textContent = text;
   
-  // Esconder mensagem de erro se selecionado
+  // Esconder mensagem de erro se seleccionado
   if (selected.length > 0) {
     document.getElementById(type + '-error').style.display = 'none';
   }
 }
 
+/**
+ * validateForm()
+ * - Assegura que existe pelo menos uma consola e um género antes de actualizar.
+ */
 function validateForm() {
   var consolesCheckboxes = document.querySelectorAll('input[name="consoles[]"]:checked');
   var genresCheckboxes = document.querySelectorAll('input[name="genres[]"]:checked');
@@ -108,6 +144,12 @@ function validateForm() {
   return isValid;
 }
 
+// Inicializar texto seleccionado ao carregar
+window.onload = function() {
+  updateSelectedText('consoles');
+  updateSelectedText('genres');
+};
+
 // Fechar dropdown ao clicar fora
 window.onclick = function(event) {
   if (!event.target.matches('.dropdown-button') && !event.target.matches('.dropdown-button span') && !event.target.closest('.dropdown-content')) {
@@ -118,6 +160,4 @@ window.onclick = function(event) {
   }
 }
 </script>
-<a href="<?php echo $url_alias;?>/movie">Voltar</a>
-
-
+<a href="<?php echo $url_alias;?>/jogo">Voltar</a>
