@@ -7,6 +7,12 @@ class Home extends Controller {
     $this->view('home/index');
   }
 
+  // página "Acerca de Nós"
+  public function about() {
+    // se quiseres passar dados aos autores, envia um array em segundo argumento
+    $this->view('home/about');
+  }
+
 }
 
 ?>

@@ -82,3 +82,8 @@ function searchGames() {
   }
 }
 </script>
+
+<!-- Link fixo inferior direito para página 'Acerca de Nós' (botão azul) -->
+<div style="position: fixed; right: 10px; bottom: 10px; z-index: 999;">
+  <a href="<?php echo $url_alias;?>/home/about" class="btn" style="background: #0d6efd; color: #fff; border: 1px solid #0b5ed7; padding: 8px 12px; border-radius: 6px; text-decoration: none;">Acerca de Nós</a>
+</div>
