@@ -30,7 +30,7 @@ $selectedGenreIds = array_map(function($g) { return $g['id']; }, $data['selected
     <label for="game_image">URL da Imagem:</label>
     <input type="text" id="game_image" name="game_image" value="<?php echo $data['movie'][0]['game_image']; ?>">
 
-    <label>Consolas:</label>
+    <label>Consolas: <span style="color: red;">*</span></label>
     <div class="custom-dropdown">
       <div class="dropdown-button" onclick="toggleDropdown('consoles-dropdown')">
         <span id="consoles-selected">Selecione as consolas</span>
@@ -46,8 +46,9 @@ $selectedGenreIds = array_map(function($g) { return $g['id']; }, $data['selected
         <?php } ?>
       </div>
     </div>
+    <div id="consoles-error" style="color: red; font-size: 12px; margin-bottom: 15px; display: none;">Selecione pelo menos uma consola</div>
 
-    <label>Géneros:</label>
+    <label>Géneros: <span style="color: red;">*</span></label>
     <div class="custom-dropdown">
       <div class="dropdown-button" onclick="toggleDropdown('genres-dropdown')">
         <span id="genres-selected">Selecione os géneros</span>
@@ -63,9 +64,10 @@ $selectedGenreIds = array_map(function($g) { return $g['id']; }, $data['selected
         <?php } ?>
       </div>
     </div>
+    <div id="genres-error" style="color: red; font-size: 12px; margin-bottom: 15px; display: none;">Selecione pelo menos um género</div>
 
     <div style="display: flex; gap: 10px; margin-top: 20px;">
-      <button type="submit" class="btn btn-warning">✅ Atualizar Jogo</button>
+      <button type="submit" class="btn btn-warning" onclick="return validateForm()">✅ Atualizar Jogo</button>
       <a href="<?php echo $url_alias;?>/movie" class="btn btn-secondary">❌ Cancelar</a>
     </div>
   </form>
@@ -87,6 +89,36 @@ function updateSelectedText(type) {
   });
   var text = selected.length > 0 ? selected.join(', ') : 'Selecione os ' + type;
   document.getElementById(type + '-selected').textContent = text;
+  
+  // Esconder mensagem de erro se selecionado
+  if (selected.length > 0) {
+    document.getElementById(type + '-error').style.display = 'none';
+  }
+}
+
+function validateForm() {
+  var consolesCheckboxes = document.querySelectorAll('input[name="consoles[]"]:checked');
+  var genresCheckboxes = document.querySelectorAll('input[name="genres[]"]:checked');
+  
+  var isValid = true;
+  
+  // Validar consolas
+  if (consolesCheckboxes.length === 0) {
+    document.getElementById('consoles-error').style.display = 'block';
+    isValid = false;
+  } else {
+    document.getElementById('consoles-error').style.display = 'none';
+  }
+  
+  // Validar géneros
+  if (genresCheckboxes.length === 0) {
+    document.getElementById('genres-error').style.display = 'block';
+    isValid = false;
+  } else {
+    document.getElementById('genres-error').style.display = 'none';
+  }
+  
+  return isValid;
 }
 
 // Inicializar texto selecionado ao carregar
