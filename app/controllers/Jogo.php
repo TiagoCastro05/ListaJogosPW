@@ -26,6 +26,23 @@ class Jogo extends Controller {
     $JogoModel = $this->model('Jogo');
     // Obtém todos os jogos usando o método do model
     $data = $JogoModel::getAllJogos();
+    // Anexar consolas e géneros a cada jogo para uso na view (filters/data-attrs)
+    if (is_array($data)) {
+      foreach ($data as $k => $j) {
+        if (isset($j['id'])) {
+          $data[$k]['consoles'] = $JogoModel::getJogoConsoles($j['id']);
+          $data[$k]['genres'] = $JogoModel::getJogoGenres($j['id']);
+        } else {
+          $data[$k]['consoles'] = [];
+          $data[$k]['genres'] = [];
+        }
+      }
+    }
+    // também obter listas de consolas e géneros para os filtros
+    $Consoles = $this->model('Consoles');
+    $Genres = $this->model('Genres');
+    $consoles = $Consoles::getAllConsoles();
+    $genres = $Genres::getAllGenres();
     /*
     $Movies = new Movies();
     $data = $Movies->getAllMovies();
@@ -33,8 +50,8 @@ class Jogo extends Controller {
     $Movies = "Movies";
     $data = $Movies::getAllMovies();
     */
-    // Passa os dados para a view usando a chave 'jogos'
-    $this->view('jogo/index', ['jogos' => $data]);
+    // Passa os dados para a view usando as chaves 'jogos', 'consoles', 'genres'
+    $this->view('jogo/index', ['jogos' => $data, 'consoles' => $consoles, 'genres' => $genres]);
   }
 
   /**

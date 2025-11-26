@@ -52,7 +52,7 @@
   <p>
     Esta aplicação é uma lista de jogos construída em PHP seguindo o
     padrão MVC. Permite listar, pesquisar, criar, editar e eliminar jogos,
-    associá-los a consolas e géneros, e ver detalhes individuais.
+    associá-los a consolas e géneros e ver detalhes individuais.
   </p>
 
   <div style="margin-top: 20px;">
