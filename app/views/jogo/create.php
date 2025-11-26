@@ -26,11 +26,13 @@
     <label for="title">Título: *</label>
     <input type="text" id="title" name="title" required placeholder="Ex: The Legend of Zelda">
 
-    <label for="metacritic_rating">Metacritic Rating:</label>
-    <input type="text" id="metacritic_rating" name="metacritic_rating" placeholder="Ex: 95">
+    <label for="metacritic_rating">Metacritic Rating (0-100):</label>
+    <input type="number" id="metacritic_rating" name="metacritic_rating" min="0" max="100" step="1" placeholder="Ex: 95" value="<?php echo isset($data['old']['metacritic_rating']) ? htmlspecialchars($data['old']['metacritic_rating']) : ''; ?>">
+    <div id="metacritic-error" style="color: red; font-size:12px; display:none;">Introduza um valor entre 0 e 100</div>
 
-    <label for="release_year">Ano de Lançamento:</label>
-    <input type="text" id="release_year" name="release_year" placeholder="Ex: 2023">
+    <label for="release_year">Ano de Lançamento (1900-2080):</label>
+    <input type="number" id="release_year" name="release_year" min="1900" max="2080" step="1" placeholder="Ex: 2023" value="<?php echo isset($data['old']['release_year']) ? htmlspecialchars($data['old']['release_year']) : ''; ?>">
+    <div id="year-error" style="color: red; font-size:12px; display:none;">Introduza um ano entre 1900 e 2080</div>
 
     <label for="game_image">URL da Imagem:</label>
     <input type="text" id="game_image" name="game_image" placeholder="https://exemplo.com/imagem.jpg">
@@ -67,6 +69,12 @@
     </div>
     <div id="genres-error" style="color: red; font-size: 12px; margin-bottom: 15px; display: none;">Selecione pelo menos um género</div>
 
+    <?php if (isset($data['errors']) && count($data['errors']) > 0) { ?>
+      <div style="color: red; margin-bottom: 10px;">
+        <?php foreach ($data['errors'] as $err) { echo '<div>'.$err.'</div>'; } ?>
+      </div>
+    <?php } ?>
+
     <div style="display: flex; gap: 10px; margin-top: 20px;">
       <button type="submit" class="btn btn-success" onclick="return validateForm()">✅ Criar Jogo</button>
       <a href="<?php echo $url_alias;?>/jogo" class="btn btn-secondary">❌ Cancelar</a>
@@ -102,6 +110,36 @@ function validateForm() {
   var genresCheckboxes = document.querySelectorAll('input[name="genres[]"]:checked');
   
   var isValid = true;
+
+  // Validar Metacritic
+  var metField = document.getElementById('metacritic_rating');
+  var metVal = metField.value.trim();
+  if (metVal !== '') {
+    var metNum = parseFloat(metVal);
+    if (isNaN(metNum) || metNum < 0 || metNum > 100) {
+      document.getElementById('metacritic-error').style.display = 'block';
+      isValid = false;
+    } else {
+      document.getElementById('metacritic-error').style.display = 'none';
+    }
+  } else {
+    document.getElementById('metacritic-error').style.display = 'none';
+  }
+
+  // Validar Ano
+  var yearField = document.getElementById('release_year');
+  var yearVal = yearField.value.trim();
+  if (yearVal !== '') {
+    var yearNum = parseInt(yearVal, 10);
+    if (isNaN(yearNum) || yearNum < 1900 || yearNum > 2080) {
+      document.getElementById('year-error').style.display = 'block';
+      isValid = false;
+    } else {
+      document.getElementById('year-error').style.display = 'none';
+    }
+  } else {
+    document.getElementById('year-error').style.display = 'none';
+  }
   
   // Validar consolas
   if (consolesCheckboxes.length === 0) {

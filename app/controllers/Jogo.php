@@ -83,13 +83,34 @@ class Jogo extends Controller {
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $newJogoData = [
-        'title' => $_POST['title'],
-        'metacritic_rating' => $_POST['metacritic_rating'],
-        'release_year' => $_POST['release_year'],
-        'game_image' => $_POST['game_image']
+        'title' => isset($_POST['title']) ? trim($_POST['title']) : '',
+        'metacritic_rating' => isset($_POST['metacritic_rating']) ? trim($_POST['metacritic_rating']) : '',
+        'release_year' => isset($_POST['release_year']) ? trim($_POST['release_year']) : '',
+        'game_image' => isset($_POST['game_image']) ? trim($_POST['game_image']) : ''
       ];
+
+      // Validação server-side dos ranges
+      $errors = [];
+      if ($newJogoData['metacritic_rating'] !== '') {
+        if (!is_numeric($newJogoData['metacritic_rating']) || $newJogoData['metacritic_rating'] < 0 || $newJogoData['metacritic_rating'] > 100) {
+          $errors[] = 'Metacritic rating deve ser um número entre 0 e 100.';
+        }
+      }
+      if ($newJogoData['release_year'] !== '') {
+        if (!ctype_digit($newJogoData['release_year']) || (int)$newJogoData['release_year'] < 1900 || (int)$newJogoData['release_year'] > 2080) {
+          $errors[] = 'Ano de lançamento deve ser um inteiro entre 1900 e 2080.';
+        }
+      }
+
+      if (count($errors) > 0) {
+        // Recarregar os dados de suporte e mostrar erros
+        $consoles = $Consoles::getAllConsoles();
+        $genres = $Genres::getAllGenres();
+        $this->view('jogo/create', ['consoles' => $consoles, 'genres' => $genres, 'errors' => $errors, 'old' => $newJogoData]);
+        return;
+      }
+
       $info = $JogoModel::addJogo($newJogoData);
-      
       // Obter o ID do jogo inserido
       $jogoId = $info['id'];
       // Adicionar consolas se selecionadas
@@ -131,13 +152,44 @@ class Jogo extends Controller {
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $updatedJogoData = [
-        'title' => $_POST['title'],
-        'metacritic_rating' => $_POST['metacritic_rating'],
-        'release_year' => $_POST['release_year'],
-        'game_image' => $_POST['game_image']
+        'title' => isset($_POST['title']) ? trim($_POST['title']) : '',
+        'metacritic_rating' => isset($_POST['metacritic_rating']) ? trim($_POST['metacritic_rating']) : '',
+        'release_year' => isset($_POST['release_year']) ? trim($_POST['release_year']) : '',
+        'game_image' => isset($_POST['game_image']) ? trim($_POST['game_image']) : ''
       ];
+
+      // Validação server-side dos ranges
+      $errors = [];
+      if ($updatedJogoData['metacritic_rating'] !== '') {
+        if (!is_numeric($updatedJogoData['metacritic_rating']) || $updatedJogoData['metacritic_rating'] < 0 || $updatedJogoData['metacritic_rating'] > 100) {
+          $errors[] = 'Metacritic rating deve ser um número entre 0 e 100.';
+        }
+      }
+      if ($updatedJogoData['release_year'] !== '') {
+        if (!ctype_digit($updatedJogoData['release_year']) || (int)$updatedJogoData['release_year'] < 1900 || (int)$updatedJogoData['release_year'] > 2080) {
+          $errors[] = 'Ano de lançamento deve ser um inteiro entre 1900 e 2080.';
+        }
+      }
+
+      if (count($errors) > 0) {
+        // Recarregar dados para o formulário de edição mantendo os valores submetidos
+        $consoles = $Consoles::getAllConsoles();
+        $genres = $Genres::getAllGenres();
+        $selectedConsoles = isset($_POST['consoles']) && is_array($_POST['consoles']) ? $_POST['consoles'] : [];
+        $selectedGenres = isset($_POST['genres']) && is_array($_POST['genres']) ? $_POST['genres'] : [];
+        // For compatibility the view expects 'jogo' as an array with index 0
+        $this->view('jogo/update', [
+          'jogo' => [0 => $updatedJogoData],
+          'consoles' => $consoles,
+          'genres' => $genres,
+          'selectedConsoles' => $selectedConsoles,
+          'selectedGenres' => $selectedGenres,
+          'errors' => $errors
+        ]);
+        return;
+      }
+
       $info = $JogoModel::updateJogo($id, $updatedJogoData);
-      
       // Remover consolas e géneros antigos
       $JogoModel::removeJogoConsoles($id);
       $JogoModel::removeJogoGenres($id);
