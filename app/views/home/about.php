@@ -65,9 +65,4 @@
   </div>
 </div>
 
-<!--
-  Observação sobre as tags de fecho: o layout que inclui esta view pode
-  já ter estruturas HTML adicionais (por exemplo, `<main>`, `<div>` wrappers).
-  Mantemos aqui apenas o conteúdo específico da view; não fechemos ou
-  dupliquemos wrappers do layout para evitar problemas de marcação.
--->
+

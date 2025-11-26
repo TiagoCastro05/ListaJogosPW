@@ -5,7 +5,7 @@ namespace app\models;
 use app\core\Db;
 
 /**
- * Model: Movies
+ * Model: Jogo
  * --------------
  * Contém métodos estáticos para operações CRUD sobre a tabela `jogos` e
  * métodos auxiliares para gerir as relações com `consoles` e `genres`.

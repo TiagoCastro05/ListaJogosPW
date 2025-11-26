@@ -2,23 +2,23 @@
 use app\core\Controller;
 
 /**
- * Controller: Movie
+ * Controller: Jogo
  * -----------------
- * Responsável por tratar pedidos relacionados com a entidade "Movie" (jogo).
+ * Responsável por tratar pedidos relacionados com a entidade "Jogo".
  * Segue o padrão comum dos controllers no projecto:
  * - Recebe pedidos (HTTP GET/POST)
  * - Carrega os modelos necessários
  * - Executa operações (listar, criar, actualizar, apagar)
  * - Carrega a view correspondente passando os dados necessários
  *
- * Observação: os métodos usam chamadas estáticas ao model (`Movies::method()`)
- * porque os models foram implementados com métodos estáticos.
+ * Observação: os métodos usam chamadas estáticas ao model (`Jogo::method()`)
+ * quando apropriado.
  */
 class Jogo extends Controller {
   /**
    * index()
-   * - GET /movie
-   * - Obtém a lista de todos os jogos e invoca a view `movie/index`.
+  * - GET /jogo
+  * - Obtém a lista de todos os jogos e invoca a view `jogo/index`.
    * - Recebe do model um array com os jogos e passa-o para a view.
    */
   public function index() {
@@ -44,11 +44,11 @@ class Jogo extends Controller {
     $consoles = $Consoles::getAllConsoles();
     $genres = $Genres::getAllGenres();
     /*
-    $Movies = new Movies();
-    $data = $Movies->getAllMovies();
+    $Jogo = new Jogo();
+    $data = $Jogo->getAllJogos();
     ------------------------------------------------------
-    $Movies = "Movies";
-    $data = $Movies::getAllMovies();
+    $Jogo = "Jogo";
+    $data = $Jogo::getAllJogos();
     */
     // Passa os dados para a view usando as chaves 'jogos', 'consoles', 'genres'
     $this->view('jogo/index', ['jogos' => $data, 'consoles' => $consoles, 'genres' => $genres]);
@@ -56,7 +56,7 @@ class Jogo extends Controller {
 
   /**
    * get($id)
-   * - GET /movie/get/{id}
+  * - GET /jogo/get/{id}
    * - Recupera um jogo pelo id e as relações (consolas e géneros) associadas.
    * - Valida que o id é numérico; caso contrário chama `pageNotFound()`.
    *
@@ -64,8 +64,8 @@ class Jogo extends Controller {
    * - $id: identificador do jogo (int)
    *
    * Comportamento:
-   * - Carrega o model `Movies` e usa os métodos do model para buscar dados.
-   * - Passa para a view `movie/get` um array com chaves: 'movies', 'consoles', 'genres'.
+  * - Carrega o model `Jogo` e usa os métodos do model para buscar dados.
+  * - Passa para a view `jogo/get` um array com chaves: 'jogos', 'consoles', 'genres'.
    */
   public function get($id = null) {
     if (is_numeric($id)) {
@@ -81,17 +81,17 @@ class Jogo extends Controller {
 
   /**
    * create()
-   * - GET /movie/create -> mostra o formulário de criação
-   * - POST /movie/create -> processa o formulário e insere o novo jogo
+  * - GET /jogo/create -> mostra o formulário de criação
+  * - POST /jogo/create -> processa o formulário e insere o novo jogo
    *
    * Fluxo POST:
    * - Lê os campos do formulário via $_POST
-   * - Chama `Movies::addMovie()` para inserir o registo principal
+  * - Chama `Jogo::addJogo()` para inserir o registo principal
    * - Recupera o id inserido e associa consolas/ géneros com métodos dedicados
    * - Redireciona (na prática: carrega a view index com informação de sucesso)
    *
    * Fluxo GET:
-   * - Carrega dados de suporte (listas de consolas e géneros) e mostra a view `movie/create`.
+  * - Carrega dados de suporte (listas de consolas e géneros) e mostra a view `jogo/create`.
    */
   public function create() {
     $JogoModel = $this->model('Jogo');
@@ -150,12 +150,12 @@ class Jogo extends Controller {
 
   /**
    * update($id)
-   * - GET /movie/update/{id} -> mostra formulário de edição com dados preenchidos
-   * - POST /movie/update/{id} -> atualiza os dados do jogo
+  * - GET /jogo/update/{id} -> mostra formulário de edição com dados preenchidos
+  * - POST /jogo/update/{id} -> atualiza os dados do jogo
    *
    * Fluxo POST:
    * - Lê os campos do formulário
-   * - Chama `Movies::updateMovie()` para actualizar o registo
+  * - Chama `Jogo::updateJogo()` para actualizar o registo
    * - Remove as relações antigas (consolas/genres) e re-insere as selecionadas
    *
    * Fluxo GET:
@@ -241,7 +241,7 @@ class Jogo extends Controller {
 
   /**
    * delete($id)
-   * - GET /movie/delete/{id}
+  * - GET /jogo/delete/{id}
    * - Valida o id e pede ao model para remover o registo. Depois carrega a
    *   listagem novamente apresentando uma mensagem informativa.
    */

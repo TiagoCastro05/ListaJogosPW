@@ -10,11 +10,11 @@ use app\core\Controller;
  */
 class Home extends Controller {
   /**
-+   * Página inicial (home/index)
-+   *
-+   * Exibe a view principal do site. Não recebe parâmetros e não faz lógica
-+   * adicional — delega totalmente para a view.
-+   */
+   * Página inicial (home/index)
+   *
+   * Exibe a view principal do site. Não recebe parâmetros e não faz lógica
+   * adicional — delega totalmente para a view.
+   */
   public function index() {
     $this->view('home/index');
   }
