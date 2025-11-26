@@ -27,8 +27,8 @@
     
     <div class="game-details">
       <?php if (!empty($data['jogos'][0]['game_image'])) { ?>
-        <div style="text-align: center;">
-          <img src="<?php echo $data['jogos'][0]['game_image']; ?>" alt="<?php echo $data['jogos'][0]['title']; ?>" style="max-width: 400px; width: 100%;">
+        <div style="text-align: center;" class="game-image-wrap">
+          <img src="<?php echo $data['jogos'][0]['game_image']; ?>" alt="<?php echo $data['jogos'][0]['title']; ?>" style="max-width: 400px; width: 100%;" onerror="handleBrokenImage(this)">
         </div>
       <?php } ?>
       
@@ -73,3 +73,32 @@
     <a href="<?php echo $url_alias;?>/jogo" class="btn btn-secondary">← Voltar à Lista</a>
   </div>
 </div>
+<script>
+// Fallback: se a imagem não carregar, esconder a imagem e mostrar uma mensagem amigável
+function handleBrokenImage(img) {
+  try {
+    // evitar múltiplas execuções
+    if (img.dataset.brokenHandled) return;
+    img.dataset.brokenHandled = '1';
+
+    // esconder a imagem
+    img.style.display = 'none';
+
+    // criar mensagem de fallback
+    var msg = document.createElement('div');
+    msg.textContent = 'Imagem indisponível';
+    msg.style.color = '#c0392b';
+    msg.style.fontSize = '14px';
+    msg.style.marginTop = '10px';
+    msg.style.fontWeight = '600';
+
+    // anexar após a imagem
+    if (img.parentNode) {
+      img.parentNode.appendChild(msg);
+    }
+  } catch (e) {
+    // falhar silenciosamente
+    console && console.warn && console.warn('handleBrokenImage error', e);
+  }
+}
+</script>
