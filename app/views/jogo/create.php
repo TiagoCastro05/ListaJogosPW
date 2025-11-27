@@ -1,3 +1,13 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Criar Jogo</title>
+    <link rel="stylesheet" href="<?php echo $url_alias;?>/assets/css/main.css">
+</head>
+<body>
+
 <!--
   View: jogo/create.php
   ----------------------
@@ -171,5 +181,7 @@ window.onclick = function(event) {
 }
 </script>
 <a href="<?php echo $url_alias;?>/jogo">Voltar</a>
+</body>
+</html>
 
 

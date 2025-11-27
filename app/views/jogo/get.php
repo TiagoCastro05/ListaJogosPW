@@ -7,7 +7,15 @@
   - Mostra a imagem (se existir), metacritic, ano e as listas de consolas e géneros.
 -->
 
-<link rel="stylesheet" href="<?php echo $url_alias;?>/assets/css/main.css">
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Detalhes do Jogo</title>
+    <link rel="stylesheet" href="<?php echo $url_alias;?>/assets/css/main.css">
+</head>
+<body>
 
 <div class="container">
   <div style="margin-bottom: 20px;">
@@ -102,3 +110,5 @@ function handleBrokenImage(img) {
   }
 }
 </script>
+</body>
+</html>

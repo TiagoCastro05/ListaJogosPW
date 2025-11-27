@@ -1,20 +1,12 @@
-<?php
-/**
- * View: Acerca de Nós (About)
- * ---------------------------
- * Objetivo: apresentar os autores do projecto e uma breve descrição técnica.
- * Este ficheiro é uma view simples que é incluída pelo layout da aplicação.
- *
- * Variáveis esperadas (definidas externamente):
- * - $url_alias : string com o base URL da aplicação (usado para montar links/paths).
- *
- * Nota: esta view contém apenas marcação HTML e pequenas expressões PHP
- * para criar caminhos relativos. Não deve executar lógica de negócio.
- */
-?>
-
-<!-- Incluir o CSS principal da aplicação. -->
-<link rel="stylesheet" href="<?php echo $url_alias;?>/assets/css/main.css">
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Acerca de Nós - Jogos App</title>
+    <link rel="stylesheet" href="<?php echo $url_alias;?>/assets/css/main.css">
+</head>
+<body>
 
 <!--
   Secção principal: container com o conteúdo da página "Acerca de Nós".
@@ -64,5 +56,7 @@
     <a href="<?php echo $url_alias;?>/jogo" class="btn btn-secondary">← Voltar à Lista</a>
   </div>
 </div>
+</body>
+</html>
 
 
