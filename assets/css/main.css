@@ -396,8 +396,25 @@ a:hover {
   background: #764ba2;
 }
 
-/* Responsividade */
+/* ============================================================================
+   RESPONSIVIDADE - Adaptação para Dispositivos Móveis
+   ============================================================================
+   Esta secção contém media queries para tornar a aplicação responsiva e
+   compatível com diferentes tamanhos de ecrã (smartphones, tablets, etc.).
+   
+   Breakpoints utilizados:
+   - max-width: 768px  -> Dispositivos móveis (smartphones)
+   - max-width: 480px  -> Smartphones pequenos
+   - 769px-1024px      -> Tablets
+   
+   Objetivo: Garantir uma experiência de utilizador otimizada em todos os
+   dispositivos, com botões maiores para toque, layouts verticais e texto
+   legível sem necessidade de zoom.
+   ============================================================================ */
+
+/* Dispositivos móveis - Smartphones (até 768px) */
 @media (max-width: 768px) {
+  /* Container principal - reduz padding para aproveitar espaço */
   body {
     padding: 10px;
   }
@@ -407,6 +424,7 @@ a:hover {
     border-radius: 10px;
   }
 
+  /* Títulos - reduz tamanho de fonte para mobile */
   h1 {
     font-size: 1.8em;
     margin-bottom: 20px;
@@ -416,7 +434,7 @@ a:hover {
     font-size: 1.5em;
   }
 
-  /* Botões em mobile */
+  /* Botões em mobile - aumenta área de toque (touch-friendly) */
   button,
   .btn,
   a.btn {
@@ -425,6 +443,7 @@ a:hover {
     white-space: nowrap;
   }
 
+  /* Ações do topo - layout vertical em mobile */
   .top-actions {
     flex-direction: column;
     align-items: stretch;
@@ -436,13 +455,13 @@ a:hover {
     margin-right: 0 !important;
   }
 
-  /* Barra de pesquisa */
+  /* Barra de pesquisa - ajusta para mobile */
   .search-bar input[type="text"] {
     font-size: 14px;
     padding: 10px 15px;
   }
 
-  /* Lista de jogos */
+  /* Lista de jogos - layout vertical (stacked) */
   ul li {
     flex-direction: column;
     align-items: flex-start;
@@ -454,6 +473,7 @@ a:hover {
     margin-bottom: 10px;
   }
 
+  /* Container de ações dos jogos - wrap horizontal */
   ul li > div {
     display: flex;
     flex-wrap: wrap;
@@ -462,6 +482,7 @@ a:hover {
     margin-top: 10px;
   }
 
+  /* Links de ação - distribui em 3 colunas */
   ul li a {
     margin: 0;
     flex: 1;
@@ -471,7 +492,7 @@ a:hover {
     font-size: 13px;
   }
 
-  /* Detalhes do jogo */
+  /* Detalhes do jogo - reduz padding */
   .game-details {
     padding: 15px;
   }
@@ -479,14 +500,15 @@ a:hover {
   .game-details > div {
     padding: 12px;
     font-size: 14px;
-    word-wrap: break-word;
+    word-wrap: break-word; /* quebra palavras longas */
   }
 
+  /* Imagens - ajusta para largura total em mobile */
   .game-details img {
     max-width: 100% !important;
   }
 
-  /* Formulários */
+  /* Formulários - otimiza espaçamento */
   form {
     padding: 15px;
   }
@@ -501,7 +523,7 @@ a:hover {
     padding: 10px;
   }
 
-  /* Dropdown */
+  /* Dropdown customizado - ajusta para mobile */
   .custom-dropdown {
     width: 100%;
   }
@@ -516,7 +538,7 @@ a:hover {
     font-size: 14px;
   }
 
-  /* Botões de ação em formulários */
+  /* Botões de ação em formulários - layout vertical */
   form > div[style*="display: flex"] {
     flex-direction: column;
   }
@@ -527,7 +549,7 @@ a:hover {
     margin-bottom: 10px;
   }
 
-  /* Navegação */
+  /* Navegação - botões em coluna */
   div[style*="margin-bottom: 20px"] {
     display: flex;
     flex-direction: column;
@@ -540,7 +562,7 @@ a:hover {
     margin-right: 0 !important;
   }
 
-  /* Botões no rodapé */
+  /* Botões no rodapé - layout vertical */
   div[style*="margin-top: 30px"] {
     flex-direction: column !important;
   }
@@ -551,7 +573,7 @@ a:hover {
   }
 }
 
-/* Tablets */
+/* Tablets - Dispositivos médios (769px até 1024px) */
 @media (min-width: 769px) and (max-width: 1024px) {
   .container {
     padding: 25px;
@@ -561,14 +583,16 @@ a:hover {
     font-size: 2.2em;
   }
 
+  /* Ajusta ligeiramente os botões para tablets */
   ul li a {
     padding: 8px 12px;
     font-size: 14px;
   }
 }
 
-/* Mobile pequeno */
+/* Smartphones pequenos (até 480px) */
 @media (max-width: 480px) {
+  /* Reduz ainda mais os títulos para ecrãs pequenos */
   h1 {
     font-size: 1.5em;
   }
@@ -577,6 +601,7 @@ a:hover {
     font-size: 1.3em;
   }
 
+  /* Botões ocupam toda a largura em ecrãs muito pequenos */
   ul li a {
     min-width: 100%;
     margin-bottom: 5px;
