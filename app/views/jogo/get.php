@@ -18,11 +18,6 @@
 <body>
 
 <div class="container">
-  <div style="margin-bottom: 20px;">
-    <a href="/jogosapp/" class="btn btn-home">🏠 Início</a>
-    <a href="<?php echo $url_alias;?>/jogo" class="btn btn-secondary">← Voltar à Lista</a>
-  </div>
-  
   <?php
   if (count($data['jogos']) == 0) {
   ?>
