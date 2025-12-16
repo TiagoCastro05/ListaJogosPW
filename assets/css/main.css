@@ -406,10 +406,6 @@ a:hover {
    - max-width: 768px  -> Dispositivos móveis (smartphones)
    - max-width: 480px  -> Smartphones pequenos
    - 769px-1024px      -> Tablets
-   
-   Objetivo: Garantir uma experiência de utilizador otimizada em todos os
-   dispositivos, com botões maiores para toque, layouts verticais e texto
-   legível sem necessidade de zoom.
    ============================================================================ */
 
 /* Dispositivos móveis - Smartphones (até 768px) */

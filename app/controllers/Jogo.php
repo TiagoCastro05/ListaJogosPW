@@ -24,8 +24,10 @@ class Jogo extends Controller {
   public function index() {
     // Instancia o model `Jogo` (classe em app/models/Jogo.php)
     $JogoModel = $this->model('Jogo');
+    
     // Obtém todos os jogos usando o método do model
     $data = $JogoModel::getAllJogos();
+
     // Anexar consolas e géneros a cada jogo para uso na view (filters/data-attrs)
     if (is_array($data)) {
       foreach ($data as $k => $j) {
@@ -43,13 +45,7 @@ class Jogo extends Controller {
     $Genres = $this->model('Genres');
     $consoles = $Consoles::getAllConsoles();
     $genres = $Genres::getAllGenres();
-    /*
-    $Jogo = new Jogo();
-    $data = $Jogo->getAllJogos();
-    ------------------------------------------------------
-    $Jogo = "Jogo";
-    $data = $Jogo::getAllJogos();
-    */
+    
     // Passa os dados para a view usando as chaves 'jogos', 'consoles', 'genres'
     $this->view('jogo/index', ['jogos' => $data, 'consoles' => $consoles, 'genres' => $genres]);
   }
@@ -122,7 +118,7 @@ class Jogo extends Controller {
       if (count($errors) > 0) {
         // Recarregar os dados de suporte e mostrar erros
         $consoles = $Consoles::getAllConsoles();
-        $genres = $Genres::getAllGenres();
+        $genres = $Genres::getAllGenres();  
         $this->view('jogo/create', ['consoles' => $consoles, 'genres' => $genres, 'errors' => $errors, 'old' => $newJogoData]);
         return;
       }

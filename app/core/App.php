@@ -21,7 +21,7 @@ class App {
     $this->controller = 'Home';
     $this->method = 'index';
     $this->params = [];
-    $this->startIndexFromUrl = 1; // NO MEU AMBIENTE DE DESENVOLVIMENTO!
+    $this->startIndexFromUrl = 1; 
     $this->pageNotFound = '';     // boolean
     $this->parseURL();
     $this->setController();
