@@ -166,6 +166,26 @@
         </div>
       </div>
 
+      <style>
+        /* Layout mobile - 2 colunas */
+        @media (max-width: 768px) {
+          #gamesList {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 10px !important;
+          }
+
+          #gamesList {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 8px !important;
+          }
+
+          .game-card {
+            padding: 12px !important;
+            font-size: 0.85em;
+          }
+        }
+      </style>
+
       <!-- Mensagem quando não há resultados -->
       <div
         id="noResults"
