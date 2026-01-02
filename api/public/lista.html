@@ -685,17 +685,12 @@
                     <button onclick="closeViewModal(); editJogo(${
                       jogo.id
                     });" class="btn btn-warning" style="flex: 1; max-width: 200px;">✏️ Editar</button>
-                    <button onclick="if(confirm('Tem a certeza que deseja eliminar \"${jogo.title
-                      .replace(/'/g, "\\'")
-                      .replace(
-                        /"/g,
-                        "&quot;"
-                      )}\"?')) { closeViewModal(); deleteJogo(${
-              jogo.id
-            }, '${jogo.title.replace(
+                    <button onclick="confirmDelete(${
+                      jogo.id
+                    }, '${jogo.title.replace(
               /'/g,
               "\\'"
-            )}'); }" class="btn btn-danger" style="flex: 1; max-width: 200px;">🗑️ Eliminar</button>
+            )}');" class="btn btn-danger" style="flex: 1; max-width: 200px;">🗑️ Eliminar</button>
                 </div>
             `;
 
@@ -886,8 +881,6 @@
 
       // DELETE - Eliminar jogo
       async function deleteJogo(id, title) {
-        if (!confirm(`Tem a certeza que deseja eliminar "${title}"?`)) return;
-
         try {
           const response = await fetch(`${API_URL}/jogos/${id}`, {
             method: "DELETE",
@@ -903,6 +896,14 @@
           }
         } catch (error) {
           showMessage("❌ Erro ao eliminar jogo", "error");
+        }
+      }
+
+      // Confirmar eliminação (chamado do modal)
+      function confirmDelete(id, title) {
+        if (confirm(`Tem a certeza que deseja eliminar "${title}"?`)) {
+          closeViewModal();
+          deleteJogo(id, title);
         }
       }
 
