@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <title>API Node.js - Lista de Jogos</title>
+    <!-- CSS do projeto PHP -->
+    <link rel="stylesheet" href="/css/main.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>🎮 Lista de Jogos - API Node.js</h1>
+
+      <!-- Estatísticas da API -->
+      <div style="margin: 30px 0">
+        <h2 style="color: #667eea; font-size: 1.3em; margin-bottom: 15px">
+          📊 Estatísticas da API
+        </h2>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+          "
+        >
+          <div
+            style="
+              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+              color: white;
+              padding: 25px;
+              border-radius: 10px;
+              text-align: center;
+            "
+          >
+            <div style="font-size: 3em; font-weight: bold" id="total-jogos">
+              -
+            </div>
+            <div style="font-size: 1.1em; opacity: 0.95">Total de Jogos</div>
+          </div>
+          <div
+            style="
+              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+              color: white;
+              padding: 25px;
+              border-radius: 10px;
+              text-align: center;
+            "
+          >
+            <div style="font-size: 3em; font-weight: bold" id="total-consoles">
+              -
+            </div>
+            <div style="font-size: 1.1em; opacity: 0.95">Consolas</div>
+          </div>
+          <div
+            style="
+              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+              color: white;
+              padding: 25px;
+              border-radius: 10px;
+              text-align: center;
+            "
+          >
+            <div style="font-size: 3em; font-weight: bold" id="total-genres">
+              -
+            </div>
+            <div style="font-size: 1.1em; opacity: 0.95">Géneros</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ações rápidas no topo -->
+      <div class="top-actions">
+        <a href="/" class="btn btn-home">🏠 Início</a>
+        <a
+          href="#"
+          onclick="openCreateModal(); return false;"
+          class="btn btn-success"
+          >➕ Adicionar Novo Jogo</a
+        >
+        <a
+          href="http://localhost:3000/api-docs"
+          target="_blank"
+          class="btn"
+          style="background: #ffc107; color: #333"
+          >📚 Swagger</a
+        >
+      </div>
+
+      <!-- Filtros -->
+      <div
+        class="search-bar"
+        style="
+          display: flex;
+          gap: 10px;
+          align-items: center;
+          flex-wrap: wrap;
+          margin-bottom: 12px;
+        "
+      >
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="🔍 Pesquisar jogos..."
+          onkeyup="searchGames()"
+          style="flex: 1; min-width: 200px"
+        />
+        <select id="filterConsole" onchange="searchGames()">
+          <option value="">Todas as Consolas</option>
+        </select>
+        <select id="filterGenre" onchange="searchGames()">
+          <option value="">Todos os Géneros</option>
+        </select>
+        <select id="filterMet" onchange="searchGames()">
+          <option value="">Todos Metacritic</option>
+          <option value="0">0</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="30">30</option>
+          <option value="40">40</option>
+          <option value="50">50</option>
+          <option value="60">60</option>
+          <option value="70">70</option>
+          <option value="80">80</option>
+          <option value="90">90</option>
+          <option value="100">100</option>
+        </select>
+        <select id="filterYear" onchange="searchGames()">
+          <option value="">Todos Anos</option>
+        </select>
+        <button
+          class="btn btn-secondary"
+          onclick="resetFilters(); return false;"
+        >
+          Limpar
+        </button>
+      </div>
+
+      <!-- Mensagens de sucesso/erro -->
+      <div
+        id="message-box"
+        style="display: none; padding: 15px; border-radius: 8px; margin: 10px 0"
+      ></div>
+
+      <!-- Lista de jogos -->
+      <div
+        id="gamesList"
+        style="
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 15px;
+          margin-top: 20px;
+        "
+      >
+        <div
+          style="
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            grid-column: span 3;
+          "
+        >
+          <p>A carregar jogos...</p>
+        </div>
+      </div>
+
+      <!-- Mensagem quando não há resultados -->
+      <div
+        id="noResults"
+        style="display: none; text-align: center; padding: 40px; color: #999"
+      >
+        <h3>🔍 Nenhum jogo encontrado</h3>
+        <p>Tente pesquisar com outros termos</p>
+      </div>
+    </div>
+
+    <!-- Modal para criar jogo -->
+    <div
+      id="createModal"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        overflow-y: auto;
+      "
+    >
+      <div
+        style="
+          background: white;
+          max-width: 800px;
+          margin: 50px auto;
+          padding: 30px;
+          border-radius: 12px;
+          position: relative;
+        "
+      >
+        <button
+          onclick="closeCreateModal()"
+          style="
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+          "
+        >
+          &times;
+        </button>
+
+        <h2 style="color: #667eea; margin-bottom: 20px">
+          ➕ Criar Novo Jogo (POST /api/jogos)
+        </h2>
+
+        <form id="create-form" onsubmit="createJogo(event)">
+          <label for="title">Título: *</label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            required
+            placeholder="Ex: The Legend of Zelda"
+          />
+
+          <label for="metacritic_rating">Metacritic Rating (0-100):</label>
+          <input
+            type="number"
+            id="metacritic_rating"
+            name="metacritic_rating"
+            min="0"
+            max="100"
+            step="1"
+            placeholder="Ex: 95"
+          />
+
+          <label for="release_year">Ano de Lançamento (1900-2080):</label>
+          <input
+            type="number"
+            id="release_year"
+            name="release_year"
+            min="1900"
+            max="2080"
+            step="1"
+            placeholder="Ex: 2023"
+          />
+
+          <label for="game_image">URL da Imagem:</label>
+          <input
+            type="text"
+            id="game_image"
+            name="game_image"
+            placeholder="https://exemplo.com/imagem.jpg"
+          />
+
+          <label>Consolas: <span style="color: red">*</span></label>
+          <div class="custom-dropdown">
+            <div
+              class="dropdown-button"
+              onclick="toggleDropdown('consoles-dropdown')"
+            >
+              <span id="consoles-selected">Selecione as consolas</span>
+            </div>
+            <div id="consoles-dropdown" class="dropdown-content">
+              <!-- Preenchido via JS -->
+            </div>
+          </div>
+          <div
+            id="consoles-error"
+            style="
+              color: red;
+              font-size: 12px;
+              margin-bottom: 15px;
+              display: none;
+            "
+          >
+            Selecione pelo menos uma consola
+          </div>
+
+          <label>Géneros: <span style="color: red">*</span></label>
+          <div class="custom-dropdown">
+            <div
+              class="dropdown-button"
+              onclick="toggleDropdown('genres-dropdown')"
+            >
+              <span id="genres-selected">Selecione os géneros</span>
+            </div>
+            <div id="genres-dropdown" class="dropdown-content">
+              <!-- Preenchido via JS -->
+            </div>
+          </div>
+          <div
+            id="genres-error"
+            style="
+              color: red;
+              font-size: 12px;
+              margin-bottom: 15px;
+              display: none;
+            "
+          >
+            Selecione pelo menos um género
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-top: 20px">
+            <button type="submit" class="btn btn-success">✅ Criar Jogo</button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="closeCreateModal()"
+            >
+              ❌ Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal para editar jogo -->
+    <div
+      id="editModal"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        overflow-y: auto;
+      "
+    >
+      <div
+        style="
+          background: white;
+          max-width: 800px;
+          margin: 50px auto;
+          padding: 30px;
+          border-radius: 12px;
+          position: relative;
+        "
+      >
+        <button
+          onclick="closeEditModal()"
+          style="
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+          "
+        >
+          &times;
+        </button>
+
+        <h2 style="color: #667eea; margin-bottom: 20px">
+          ✏️ Editar Jogo (PUT /api/jogos/:id)
+        </h2>
+
+        <form id="edit-form" onsubmit="updateJogo(event)">
+          <input type="hidden" id="edit-id" />
+
+          <label for="edit-title">Título: *</label>
+          <input type="text" id="edit-title" required />
+
+          <label for="edit-metacritic">Metacritic Rating (0-100):</label>
+          <input type="number" id="edit-metacritic" min="0" max="100" />
+
+          <label for="edit-year">Ano de Lançamento (1900-2080):</label>
+          <input type="number" id="edit-year" min="1900" max="2080" />
+
+          <label for="edit-image">URL da Imagem:</label>
+          <input type="text" id="edit-image" />
+
+          <label>Consolas: *</label>
+          <div class="custom-dropdown">
+            <div
+              class="dropdown-button"
+              onclick="toggleDropdown('edit-consoles-dropdown')"
+            >
+              <span id="edit-consoles-selected">Selecione as consolas</span>
+            </div>
+            <div id="edit-consoles-dropdown" class="dropdown-content">
+              <!-- Preenchido via JS -->
+            </div>
+          </div>
+
+          <label>Géneros: *</label>
+          <div class="custom-dropdown">
+            <div
+              class="dropdown-button"
+              onclick="toggleDropdown('edit-genres-dropdown')"
+            >
+              <span id="edit-genres-selected">Selecione os géneros</span>
+            </div>
+            <div id="edit-genres-dropdown" class="dropdown-content">
+              <!-- Preenchido via JS -->
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-top: 20px">
+            <button type="submit" class="btn btn-warning">
+              ✅ Atualizar Jogo
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="closeEditModal()"
+            >
+              ❌ Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal para ver detalhes -->
+    <div
+      id="viewModal"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        overflow-y: auto;
+      "
+    >
+      <div
+        style="
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          max-width: 700px;
+          margin: 50px auto;
+          padding: 30px;
+          border-radius: 12px;
+          position: relative;
+        "
+      >
+        <button
+          onclick="closeViewModal()"
+          style="
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+          "
+        >
+          &times;
+        </button>
+
+        <div id="viewContent">
+          <!-- Preenchido via JS -->
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const API_URL = "http://localhost:3000/api";
+      let allConsoles = [];
+      let allGenres = [];
+      let currentEditId = null;
+
+      // Carregar dados iniciais
+      document.addEventListener("DOMContentLoaded", () => {
+        loadJogos();
+        loadConsoles();
+        loadGenres();
+        loadStats();
+        populateYearFilter();
+      });
+
+      // Popular filtro de anos
+      function populateYearFilter() {
+        const select = document.getElementById("filterYear");
+        const currentYear = new Date().getFullYear();
+
+        // Décadas
+        for (let dec = 1900; dec <= 1990; dec += 10) {
+          const opt = document.createElement("option");
+          opt.value = `decade_${dec}`;
+          opt.textContent = `${dec}s`;
+          select.appendChild(opt);
+        }
+
+        // Anos individuais de 2000 a 2026
+        for (let y = 2000; y <= 2026; y++) {
+          const opt = document.createElement("option");
+          opt.value = y;
+          opt.textContent = y;
+          select.appendChild(opt);
+        }
+      }
+
+      // GET - Listar jogos
+      async function loadJogos() {
+        try {
+          const response = await fetch(`${API_URL}/jogos`);
+          const result = await response.json();
+
+          const gamesList = document.getElementById("gamesList");
+
+          if (result.success && result.data.length > 0) {
+            // Guardar dados para filtros
+            window.jogosData = result.data;
+            renderJogos(result.data);
+          } else {
+            gamesList.innerHTML =
+              '<li style="text-align:center; padding:40px; color:#999;"><p>Nenhum jogo encontrado.</p></li>';
+          }
+        } catch (error) {
+          console.error("Erro:", error);
+          document.getElementById("gamesList").innerHTML =
+            '<li style="text-align:center; padding:40px; color:red;"><p>Erro ao carregar jogos. Verifique se a API está a correr.</p></li>';
+        }
+      }
+
+      function renderJogos(jogos) {
+        const gamesList = document.getElementById("gamesList");
+        const noResults = document.getElementById("noResults");
+
+        if (jogos.length === 0) {
+          gamesList.style.display = "grid";
+          gamesList.innerHTML =
+            '<div style="grid-column: span 3; text-align: center; padding: 40px; color: #999;"><h3>🔍 Nenhum jogo encontrado</h3></div>';
+          noResults.style.display = "none";
+          return;
+        }
+
+        gamesList.style.display = "grid";
+        noResults.style.display = "none";
+
+        gamesList.innerHTML = jogos
+          .map(
+            (jogo) => `
+        <div class="game-card" 
+            onclick="viewJogo(${jogo.id})"
+            style="
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                padding: 20px;
+                border-radius: 10px;
+                cursor: pointer;
+                text-align: center;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+                transition: all 0.3s ease;
+                border-left: 5px solid #667eea;
+            "
+            onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.15)';"
+            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 3px 10px rgba(0,0,0,0.1)';"
+            data-console-ids="${jogo.consoles || ""}" 
+            data-genre-ids="${jogo.genres || ""}" 
+            data-metacritic="${jogo.metacritic_rating || ""}" 
+            data-year="${jogo.release_year || ""}">
+            <strong style="font-size: 1.1em; color: #333; display: block;">${
+              jogo.title
+            }</strong>
+        </div>
+    `
+          )
+          .join("");
+      }
+
+      // Pesquisar/Filtrar jogos
+      function searchGames() {
+        if (!window.jogosData) return;
+
+        const searchText = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+        const consoleFilter = document.getElementById("filterConsole").value;
+        const genreFilter = document.getElementById("filterGenre").value;
+        const metFilter = document.getElementById("filterMet").value;
+        const yearFilter = document.getElementById("filterYear").value;
+
+        const filtered = window.jogosData.filter((jogo) => {
+          // Filtro de texto
+          const matchText =
+            !searchText || jogo.title.toLowerCase().includes(searchText);
+
+          // Filtro de consola
+          const consolesStr = jogo.consoles || "";
+          const matchConsole =
+            !consoleFilter ||
+            consolesStr.toLowerCase().includes(consoleFilter.toLowerCase());
+
+          // Filtro de género
+          const genresStr = jogo.genres || "";
+          const matchGenre =
+            !genreFilter ||
+            genresStr.toLowerCase().includes(genreFilter.toLowerCase());
+
+          // Filtro metacritic (mínimo)
+          let matchMet = true;
+          if (metFilter) {
+            const metVal = jogo.metacritic_rating;
+            matchMet = metVal && metVal >= parseFloat(metFilter);
+          }
+
+          // Filtro de ano
+          let matchYear = true;
+          if (yearFilter) {
+            const year = jogo.release_year;
+            if (yearFilter.startsWith("decade_")) {
+              const dec = parseInt(yearFilter.split("_")[1]);
+              matchYear = year && year >= dec && year <= dec + 9;
+            } else {
+              matchYear = year && year == yearFilter;
+            }
+          }
+
+          return (
+            matchText && matchConsole && matchGenre && matchMet && matchYear
+          );
+        });
+
+        renderJogos(filtered);
+      }
+
+      function resetFilters() {
+        document.getElementById("searchInput").value = "";
+        document.getElementById("filterConsole").value = "";
+        document.getElementById("filterGenre").value = "";
+        document.getElementById("filterMet").value = "";
+        document.getElementById("filterYear").value = "";
+        if (window.jogosData) {
+          renderJogos(window.jogosData);
+        }
+      }
+
+      // Ver detalhes (GET by ID)
+      async function viewJogo(id) {
+        try {
+          const response = await fetch(`${API_URL}/jogos/${id}`);
+          const result = await response.json();
+
+          if (result.success) {
+            const jogo = result.data;
+            const consoles = jogo.consoles
+              .map((c) => c.console_name)
+              .join(", ");
+            const genres = jogo.genres.map((g) => g.genre).join(", ");
+
+            document.getElementById("viewContent").innerHTML = `
+                <h2 style="font-size:2em; margin-bottom:20px; color:#ffc107;">${
+                  jogo.title
+                }</h2>
+                ${
+                  jogo.game_image
+                    ? `<div style="text-align:center; margin:20px 0;"><img src="${jogo.game_image}" alt="${jogo.title}" style="max-width:100%; max-height:400px; border-radius:10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);"></div>`
+                    : ""
+                }
+                <p style="font-size:1.1em; margin:10px 0;"><strong>ID:</strong> ${
+                  jogo.id
+                }</p>
+                <p style="font-size:1.1em; margin:10px 0;"><strong>Ano:</strong> ${
+                  jogo.release_year || "N/A"
+                }</p>
+                <p style="font-size:1.1em; margin:10px 0;"><strong>Metacritic:</strong> ${
+                  jogo.metacritic_rating || "N/A"
+                }</p>
+                <p style="font-size:1.1em; margin:10px 0;"><strong>Consolas:</strong> ${consoles}</p>
+                <p style="font-size:1.1em; margin:10px 0;"><strong>Géneros:</strong> ${genres}</p>
+                <div style="display: flex; gap: 10px; margin-top: 30px; justify-content: center;">
+                    <button onclick="closeViewModal(); editJogo(${
+                      jogo.id
+                    });" class="btn btn-warning" style="flex: 1; max-width: 200px;">✏️ Editar</button>
+                    <button onclick="if(confirm('Tem a certeza que deseja eliminar \"${jogo.title
+                      .replace(/'/g, "\\'")
+                      .replace(
+                        /"/g,
+                        "&quot;"
+                      )}\"?')) { closeViewModal(); deleteJogo(${
+              jogo.id
+            }, '${jogo.title.replace(
+              /'/g,
+              "\\'"
+            )}'); }" class="btn btn-danger" style="flex: 1; max-width: 200px;">🗑️ Eliminar</button>
+                </div>
+            `;
+
+            document.getElementById("viewModal").style.display = "block";
+          } else {
+            showMessage("Erro ao obter detalhes do jogo", "error");
+          }
+        } catch (error) {
+          showMessage("Erro ao obter detalhes do jogo", "error");
+        }
+      }
+
+      function closeViewModal() {
+        document.getElementById("viewModal").style.display = "none";
+      }
+
+      // Abrir modal de criar jogo
+      function openCreateModal() {
+        document.getElementById("createModal").style.display = "block";
+      }
+
+      // Fechar modal de criar jogo
+      function closeCreateModal() {
+        document.getElementById("createModal").style.display = "none";
+        document.getElementById("create-form").reset();
+        updateSelectedText("consoles");
+        updateSelectedText("genres");
+      }
+
+      // Editar jogo (carregar dados)
+      async function editJogo(id) {
+        try {
+          const response = await fetch(`${API_URL}/jogos/${id}`);
+          const result = await response.json();
+
+          if (result.success) {
+            const jogo = result.data;
+            currentEditId = id;
+
+            document.getElementById("edit-id").value = id;
+            document.getElementById("edit-title").value = jogo.title;
+            document.getElementById("edit-metacritic").value =
+              jogo.metacritic_rating || "";
+            document.getElementById("edit-year").value =
+              jogo.release_year || "";
+            document.getElementById("edit-image").value = jogo.game_image || "";
+
+            // Marcar consolas selecionadas
+            const consoleIds = jogo.consoles.map((c) => c.id);
+            document
+              .querySelectorAll(
+                '#edit-consoles-dropdown input[type="checkbox"]'
+              )
+              .forEach((cb) => {
+                cb.checked = consoleIds.includes(parseInt(cb.value));
+              });
+            updateSelectedText("edit-consoles");
+
+            // Marcar géneros selecionados
+            const genreIds = jogo.genres.map((g) => g.id);
+            document
+              .querySelectorAll('#edit-genres-dropdown input[type="checkbox"]')
+              .forEach((cb) => {
+                cb.checked = genreIds.includes(parseInt(cb.value));
+              });
+            updateSelectedText("edit-genres");
+
+            document.getElementById("editModal").style.display = "block";
+          }
+        } catch (error) {
+          showMessage("Erro ao carregar dados do jogo", "error");
+        }
+      }
+
+      // PUT - Atualizar jogo
+      async function updateJogo(event) {
+        event.preventDefault();
+
+        const id = document.getElementById("edit-id").value;
+        const consoles = Array.from(
+          document.querySelectorAll("#edit-consoles-dropdown input:checked")
+        ).map((cb) => parseInt(cb.value));
+        const genres = Array.from(
+          document.querySelectorAll("#edit-genres-dropdown input:checked")
+        ).map((cb) => parseInt(cb.value));
+
+        if (consoles.length === 0 || genres.length === 0) {
+          alert("Selecione pelo menos uma consola e um género");
+          return;
+        }
+
+        const jogoData = {
+          title: document.getElementById("edit-title").value,
+          metacritic_rating:
+            document.getElementById("edit-metacritic").value || null,
+          release_year: document.getElementById("edit-year").value || null,
+          game_image: document.getElementById("edit-image").value || null,
+          consoles,
+          genres,
+        };
+
+        try {
+          const response = await fetch(`${API_URL}/jogos/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(jogoData),
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            showMessage(
+              `✅ Jogo "${result.data.title}" atualizado com sucesso!`,
+              "success"
+            );
+            closeEditModal();
+            loadJogos();
+            loadStats();
+          } else {
+            showMessage(`❌ Erro: ${result.message}`, "error");
+          }
+        } catch (error) {
+          showMessage("❌ Erro ao atualizar jogo", "error");
+        }
+      }
+
+      function closeEditModal() {
+        document.getElementById("editModal").style.display = "none";
+        currentEditId = null;
+      }
+
+      // POST - Criar jogo
+      async function createJogo(event) {
+        event.preventDefault();
+
+        const consoles = Array.from(
+          document.querySelectorAll("#consoles-dropdown input:checked")
+        ).map((cb) => parseInt(cb.value));
+        const genres = Array.from(
+          document.querySelectorAll("#genres-dropdown input:checked")
+        ).map((cb) => parseInt(cb.value));
+
+        if (consoles.length === 0) {
+          document.getElementById("consoles-error").style.display = "block";
+          return;
+        }
+        if (genres.length === 0) {
+          document.getElementById("genres-error").style.display = "block";
+          return;
+        }
+
+        const jogoData = {
+          title: document.getElementById("title").value,
+          metacritic_rating:
+            document.getElementById("metacritic_rating").value || null,
+          release_year: document.getElementById("release_year").value || null,
+          game_image: document.getElementById("game_image").value || null,
+          consoles,
+          genres,
+        };
+
+        try {
+          const response = await fetch(`${API_URL}/jogos`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(jogoData),
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            showMessage(
+              `✅ Jogo "${result.data.title}" criado com sucesso!`,
+              "success"
+            );
+            closeCreateModal();
+            loadJogos();
+            loadStats();
+            // Scroll para o topo
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          } else {
+            showMessage(`❌ Erro: ${result.message}`, "error");
+          }
+        } catch (error) {
+          showMessage("❌ Erro ao criar jogo", "error");
+        }
+      }
+
+      // DELETE - Eliminar jogo
+      async function deleteJogo(id, title) {
+        if (!confirm(`Tem a certeza que deseja eliminar "${title}"?`)) return;
+
+        try {
+          const response = await fetch(`${API_URL}/jogos/${id}`, {
+            method: "DELETE",
+          });
+          const result = await response.json();
+
+          if (result.success) {
+            showMessage(`✅ Jogo "${title}" eliminado com sucesso!`, "success");
+            loadJogos();
+            loadStats();
+          } else {
+            showMessage(`❌ Erro: ${result.message}`, "error");
+          }
+        } catch (error) {
+          showMessage("❌ Erro ao eliminar jogo", "error");
+        }
+      }
+
+      // Carregar consolas
+      async function loadConsoles() {
+        try {
+          const response = await fetch(`${API_URL}/consoles`);
+          const result = await response.json();
+
+          if (result.success) {
+            allConsoles = result.data;
+
+            // Popular filtro
+            const filterSelect = document.getElementById("filterConsole");
+            result.data.forEach((console) => {
+              const opt = document.createElement("option");
+              opt.value = console.console_name;
+              opt.textContent = console.console_name;
+              filterSelect.appendChild(opt);
+            });
+
+            // Popular dropdown de criação
+            const createDropdown = document.getElementById("consoles-dropdown");
+            createDropdown.innerHTML = result.data
+              .map(
+                (console) => `
+                <div class="dropdown-item">
+                    <input type="checkbox" name="consoles[]" value="${console.id}" id="console_${console.id}" onchange="updateSelectedText('consoles')">
+                    <label for="console_${console.id}">${console.console_name}</label>
+                </div>
+            `
+              )
+              .join("");
+
+            // Popular dropdown de edição
+            const editDropdown = document.getElementById(
+              "edit-consoles-dropdown"
+            );
+            editDropdown.innerHTML = result.data
+              .map(
+                (console) => `
+                <div class="dropdown-item">
+                    <input type="checkbox" value="${console.id}" id="edit_console_${console.id}" onchange="updateSelectedText('edit-consoles')">
+                    <label for="edit_console_${console.id}">${console.console_name}</label>
+                </div>
+            `
+              )
+              .join("");
+          }
+        } catch (error) {
+          console.error("Erro:", error);
+        }
+      }
+
+      // Carregar géneros
+      async function loadGenres() {
+        try {
+          const response = await fetch(`${API_URL}/genres`);
+          const result = await response.json();
+
+          if (result.success) {
+            allGenres = result.data;
+
+            // Popular filtro
+            const filterSelect = document.getElementById("filterGenre");
+            result.data.forEach((genre) => {
+              const opt = document.createElement("option");
+              opt.value = genre.genre;
+              opt.textContent = genre.genre;
+              filterSelect.appendChild(opt);
+            });
+
+            // Popular dropdown de criação
+            const createDropdown = document.getElementById("genres-dropdown");
+            createDropdown.innerHTML = result.data
+              .map(
+                (genre) => `
+                <div class="dropdown-item">
+                    <input type="checkbox" name="genres[]" value="${genre.id}" id="genre_${genre.id}" onchange="updateSelectedText('genres')">
+                    <label for="genre_${genre.id}">${genre.genre}</label>
+                </div>
+            `
+              )
+              .join("");
+
+            // Popular dropdown de edição
+            const editDropdown = document.getElementById(
+              "edit-genres-dropdown"
+            );
+            editDropdown.innerHTML = result.data
+              .map(
+                (genre) => `
+                <div class="dropdown-item">
+                    <input type="checkbox" value="${genre.id}" id="edit_genre_${genre.id}" onchange="updateSelectedText('edit-genres')">
+                    <label for="edit_genre_${genre.id}">${genre.genre}</label>
+                </div>
+            `
+              )
+              .join("");
+          }
+        } catch (error) {
+          console.error("Erro:", error);
+        }
+      }
+
+      // Toggle dropdown
+      function toggleDropdown(id) {
+        const dropdown = document.getElementById(id);
+        dropdown.classList.toggle("show");
+      }
+
+      // Carregar estatísticas
+      async function loadStats() {
+        try {
+          // Carregar total de jogos
+          const jogosRes = await fetch(`${API_URL}/jogos`);
+          const jogosData = await jogosRes.json();
+          document.getElementById("total-jogos").textContent = jogosData.success
+            ? jogosData.data.length
+            : 0;
+
+          // Carregar total de consolas
+          const consolesRes = await fetch(`${API_URL}/consoles`);
+          const consolesData = await consolesRes.json();
+          document.getElementById("total-consoles").textContent =
+            consolesData.success ? consolesData.data.length : 0;
+
+          // Carregar total de géneros
+          const genresRes = await fetch(`${API_URL}/genres`);
+          const genresData = await genresRes.json();
+          document.getElementById("total-genres").textContent =
+            genresData.success ? genresData.data.length : 0;
+        } catch (error) {
+          console.error("Erro ao carregar estatísticas:", error);
+        }
+      }
+
+      // Atualizar texto selecionado
+      function updateSelectedText(type) {
+        const prefix = type.startsWith("edit-") ? "edit-" : "";
+        const baseType = type.replace("edit-", "");
+
+        const checkboxes = document.querySelectorAll(
+          `#${type}-dropdown input[type="checkbox"]`
+        );
+        const selected = [];
+        checkboxes.forEach((cb) => {
+          if (cb.checked) {
+            selected.push(cb.nextElementSibling.textContent);
+          }
+        });
+
+        const text =
+          selected.length > 0
+            ? selected.join(", ")
+            : `Selecione os ${baseType}`;
+        document.getElementById(`${type}-selected`).textContent = text;
+
+        // Esconder erro se houver seleção
+        const errorDiv = document.getElementById(`${baseType}-error`);
+        if (errorDiv && selected.length > 0) {
+          errorDiv.style.display = "none";
+        }
+      }
+
+      // Mostrar mensagem
+      function showMessage(text, type) {
+        const box = document.getElementById("message-box");
+        box.textContent = text;
+        box.style.display = "block";
+        box.style.background = type === "success" ? "#d4edda" : "#f8d7da";
+        box.style.color = type === "success" ? "#155724" : "#721c24";
+        box.style.border =
+          type === "success" ? "1px solid #c3e6cb" : "1px solid #f5c6cb";
+
+        setTimeout(() => {
+          box.style.display = "none";
+        }, 5000);
+      }
+
+      // Fechar dropdowns ao clicar fora
+      window.onclick = function (event) {
+        if (
+          !event.target.matches(".dropdown-button") &&
+          !event.target.matches(".dropdown-button span") &&
+          !event.target.closest(".dropdown-content")
+        ) {
+          const dropdowns = document.getElementsByClassName("dropdown-content");
+          for (let i = 0; i < dropdowns.length; i++) {
+            dropdowns[i].classList.remove("show");
+          }
+        }
+      };
+    </script>
+
+    <!-- Botão Sobre Nós -->
+    <a href="/sobre.html" style="
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 12px 25px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 600;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        transition: all 0.3s ease;
+        z-index: 1000;
+    " onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 6px 20px rgba(102, 126, 234, 0.6)';"
+       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(102, 126, 234, 0.4)';">
+        ℹ️ Acerca de Nós
+    </a>
+  </body>
+</html>
