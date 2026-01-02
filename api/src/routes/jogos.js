@@ -1,3 +1,14 @@
+/**
+ * Routes Jogos - Definição de Endpoints REST para Jogos
+ *
+ * Este ficheiro define todas as rotas relacionadas com jogos, incluindo
+ * endpoints para CRUD (Create, Read, Update, Delete) e rotas para obter
+ * consolas e géneros de um jogo específico.
+ *
+ * Também contém anotações Swagger/JSDoc para gerar documentação automática
+ * da API disponível em /api-docs
+ */
+
 const express = require("express");
 const router = express.Router();
 const jogoController = require("../controllers/jogoController");
@@ -95,6 +106,7 @@ const genreController = require("../controllers/genreController");
  *                   items:
  *                     $ref: '#/components/schemas/Jogo'
  */
+// GET /api/jogos - Listar todos os jogos com filtros opcionais
 router.get("/", jogoController.getAll);
 
 /**
@@ -125,6 +137,7 @@ router.get("/", jogoController.getAll);
  *       404:
  *         description: Jogo não encontrado
  */
+// GET /api/jogos/:id - Obter jogo específico pelo ID
 router.get("/:id", jogoController.getById);
 
 /**
@@ -145,6 +158,7 @@ router.get("/:id", jogoController.getById);
  *       400:
  *         description: Dados inválidos
  */
+// POST /api/jogos - Criar novo jogo (requer title, consoles[], genres[])
 router.post("/", jogoController.create);
 
 /**
@@ -171,6 +185,7 @@ router.post("/", jogoController.create);
  *       404:
  *         description: Jogo não encontrado
  */
+// PUT /api/jogos/:id - Atualizar jogo existente
 router.put("/:id", jogoController.update);
 
 /**
@@ -191,6 +206,7 @@ router.put("/:id", jogoController.update);
  *       404:
  *         description: Jogo não encontrado
  */
+// DELETE /api/jogos/:id - Eliminar jogo e suas relações
 router.delete("/:id", jogoController.delete);
 
 /**
@@ -209,6 +225,7 @@ router.delete("/:id", jogoController.delete);
  *       200:
  *         description: Lista de consolas do jogo
  */
+// GET /api/jogos/:id/consoles - Obter consolas associadas a um jogo
 router.get("/:id/consoles", consoleController.getByJogoId);
 
 /**
@@ -227,6 +244,7 @@ router.get("/:id/consoles", consoleController.getByJogoId);
  *       200:
  *         description: Lista de géneros do jogo
  */
+// GET /api/jogos/:id/genres - Obter géneros associados a um jogo
 router.get("/:id/genres", genreController.getByJogoId);
 
 module.exports = router;

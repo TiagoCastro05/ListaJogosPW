@@ -1,3 +1,12 @@
+/**
+ * Routes Consoles - Definição de Endpoints REST para Consolas
+ *
+ * Este ficheiro define as rotas para listagem e consulta de consolas.
+ * As consolas são apenas leitura (não há endpoints de criação/atualização/eliminação).
+ *
+ * Inclui anotações Swagger para documentação automática da API.
+ */
+
 const express = require("express");
 const router = express.Router();
 const consoleController = require("../controllers/consoleController");
@@ -45,6 +54,7 @@ const consoleController = require("../controllers/consoleController");
  *                   items:
  *                     $ref: '#/components/schemas/Console'
  */
+// GET /api/consoles - Listar todas as consolas disponíveis
 router.get("/", consoleController.getAll);
 
 /**
@@ -65,6 +75,7 @@ router.get("/", consoleController.getAll);
  *       404:
  *         description: Consola não encontrada
  */
+// GET /api/consoles/:id - Obter consola específica pelo ID
 router.get("/:id", consoleController.getById);
 
 module.exports = router;

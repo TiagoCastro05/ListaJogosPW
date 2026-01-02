@@ -1,3 +1,12 @@
+/**
+ * Routes Genres - Definição de Endpoints REST para Géneros
+ *
+ * Este ficheiro define as rotas para listagem e consulta de géneros.
+ * Os géneros são apenas leitura (não há endpoints de criação/atualização/eliminação).
+ *
+ * Inclui anotações Swagger para documentação automática da API.
+ */
+
 const express = require("express");
 const router = express.Router();
 const genreController = require("../controllers/genreController");
@@ -45,6 +54,7 @@ const genreController = require("../controllers/genreController");
  *                   items:
  *                     $ref: '#/components/schemas/Genre'
  */
+// GET /api/genres - Listar todos os géneros disponíveis
 router.get("/", genreController.getAll);
 
 /**
@@ -64,6 +74,7 @@ router.get("/", genreController.getAll);
  *         description: Género encontrado
  *       404:
  *         description: Género não encontrado
+// GET /api/genres/:id - Obter género específico pelo ID
  */
 router.get("/:id", genreController.getById);
 

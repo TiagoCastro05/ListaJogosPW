@@ -477,21 +477,43 @@
     </div>
 
     <script>
+      // ============================================================================
+      // CONFIGURAÇÃO E VARIÁVEIS GLOBAIS
+      // ============================================================================
+
+      // URL base da API REST
       const API_URL = "http://localhost:3000/api";
+
+      // Arrays para armazenar dados das consolas e géneros (carregados ao iniciar)
       let allConsoles = [];
       let allGenres = [];
+
+      // ID do jogo sendo editado (usado no modal de edição)
       let currentEditId = null;
 
-      // Carregar dados iniciais
+      // ============================================================================
+      // INICIALIZAÇÃO DA APLICAÇÃO
+      // ============================================================================
+
+      /**
+       * Executa quando o DOM está completamente carregado
+       * Carrega todos os dados iniciais necessários
+       */
       document.addEventListener("DOMContentLoaded", () => {
-        loadJogos();
-        loadConsoles();
-        loadGenres();
-        loadStats();
-        populateYearFilter();
+        loadJogos(); // Carrega lista de jogos
+        loadConsoles(); // Carrega consolas para filtros e dropdowns
+        loadGenres(); // Carrega géneros para filtros e dropdowns
+        loadStats(); // Carrega estatísticas (totais)
+        populateYearFilter(); // Popula filtro de anos
       });
 
-      // Popular filtro de anos
+      // ============================================================================
+      // FILTROS E PESQUISA
+      // ============================================================================
+
+      /**
+       * Popula o dropdown de filtro de anos com décadas (1900s-1990s) e anos individuais (2000-2026)
+       */
       function populateYearFilter() {
         const select = document.getElementById("filterYear");
         const currentYear = new Date().getFullYear();
@@ -513,7 +535,15 @@
         }
       }
 
-      // GET - Listar jogos
+      // ============================================================================
+      // OPERAÇÕES CRUD - READ (GET)
+      // ============================================================================
+
+      /**
+       * Carrega lista de jogos da API (GET /api/jogos)
+       * Armazena dados em window.jogosData para uso nos filtros
+       * Chama renderJogos() para exibir os jogos no grid
+       */
       async function loadJogos() {
         try {
           const response = await fetch(`${API_URL}/jogos`);
@@ -536,6 +566,10 @@
         }
       }
 
+      /**
+       * Renderiza os jogos no grid de 3 colunas
+       * @param {Array} jogos - Array de objetos de jogos
+       */
       function renderJogos(jogos) {
         const gamesList = document.getElementById("gamesList");
         const noResults = document.getElementById("noResults");
@@ -581,7 +615,11 @@
           .join("");
       }
 
-      // Pesquisar/Filtrar jogos
+      /**
+       * Filtra jogos com base nos critérios selecionados
+       * Aplica filtros de: texto, consola, género, metacritic e ano
+       * Suporta décadas (ex: 1980s) e anos individuais
+       */
       function searchGames() {
         if (!window.jogosData) return;
 
@@ -648,7 +686,11 @@
         }
       }
 
-      // Ver detalhes (GET by ID)
+      /**
+       * Obtém detalhes completos de um jogo (GET /api/jogos/:id)
+       * Mostra informações no modal incluindo imagem, ano, metacritic, consolas e géneros
+       * @param {number} id - ID do jogo
+       */
       async function viewJogo(id) {
         try {
           const response = await fetch(`${API_URL}/jogos/${id}`);
@@ -720,7 +762,15 @@
         updateSelectedText("genres");
       }
 
-      // Editar jogo (carregar dados)
+      // ============================================================================
+      // OPERAÇÕES CRUD - UPDATE (PUT)
+      // ============================================================================
+
+      /**
+       * Carrega dados de um jogo para edição (GET /api/jogos/:id)
+       * Preenche formulário de edição e marca consolas/géneros selecionados
+       * @param {number} id - ID do jogo a editar
+       */
       async function editJogo(id) {
         try {
           const response = await fetch(`${API_URL}/jogos/${id}`);
@@ -765,7 +815,12 @@
         }
       }
 
-      // PUT - Atualizar jogo
+      /**
+       * Atualiza jogo existente (PUT /api/jogos/:id)
+       * Valida consolas e géneros antes de enviar
+       * Atualiza lista e estatísticas após sucesso
+       * @param {Event} event - Evento de submit do formulário
+       */
       async function updateJogo(event) {
         event.preventDefault();
 
@@ -822,7 +877,16 @@
         currentEditId = null;
       }
 
-      // POST - Criar jogo
+      // ============================================================================
+      // OPERAÇÕES CRUD - CREATE (POST)
+      // ============================================================================
+
+      /**
+       * Cria novo jogo (POST /api/jogos)
+       * Valida campos obrigatórios (título, consolas, géneros)
+       * Fecha modal e atualiza lista após sucesso
+       * @param {Event} event - Evento de submit do formulário
+       */
       async function createJogo(event) {
         event.preventDefault();
 
@@ -879,7 +943,16 @@
         }
       }
 
-      // DELETE - Eliminar jogo
+      // ============================================================================
+      // OPERAÇÕES CRUD - DELETE
+      // ============================================================================
+
+      /**
+       * Elimina jogo (DELETE /api/jogos/:id)
+       * Atualiza lista e estatísticas após sucesso
+       * @param {number} id - ID do jogo
+       * @param {string} title - Título do jogo (para mensagem)
+       */
       async function deleteJogo(id, title) {
         try {
           const response = await fetch(`${API_URL}/jogos/${id}`, {
@@ -907,7 +980,14 @@
         }
       }
 
-      // Carregar consolas
+      // ============================================================================
+      // CARREGAR DADOS AUXILIARES
+      // ============================================================================
+
+      /**
+       * Carrega lista de consolas da API (GET /api/consoles)
+       * Popula filtro e dropdowns de criação/edição
+       */
       async function loadConsoles() {
         try {
           const response = await fetch(`${API_URL}/consoles`);
@@ -958,7 +1038,10 @@
         }
       }
 
-      // Carregar géneros
+      /**
+       * Carrega lista de géneros da API (GET /api/genres)
+       * Popula filtro e dropdowns de criação/edição
+       */
       async function loadGenres() {
         try {
           const response = await fetch(`${API_URL}/genres`);
@@ -1009,13 +1092,23 @@
         }
       }
 
-      // Toggle dropdown
+      // ============================================================================
+      // UTILITÁRIOS E HELPERS
+      // ============================================================================
+
+      /**
+       * Abre/fecha dropdown customizado de consolas ou géneros
+       * @param {string} id - ID do elemento dropdown
+       */
       function toggleDropdown(id) {
         const dropdown = document.getElementById(id);
         dropdown.classList.toggle("show");
       }
 
-      // Carregar estatísticas
+      /**
+       * Carrega estatísticas da API (total de jogos, consolas e géneros)
+       * Atualiza os cards de estatísticas no topo da página
+       */
       async function loadStats() {
         try {
           // Carregar total de jogos
@@ -1041,7 +1134,10 @@
         }
       }
 
-      // Atualizar texto selecionado
+      /**
+       * Atualiza texto exibido no botão do dropdown mostrando itens selecionados
+       * @param {string} type - Tipo do dropdown ('consoles', 'genres', 'edit-consoles', 'edit-genres')
+       */
       function updateSelectedText(type) {
         const prefix = type.startsWith("edit-") ? "edit-" : "";
         const baseType = type.replace("edit-", "");
@@ -1069,7 +1165,12 @@
         }
       }
 
-      // Mostrar mensagem
+      /**
+       * Exibe mensagem temporária de sucesso ou erro
+       * Mensagem desaparece automaticamente após 5 segundos
+       * @param {string} text - Texto da mensagem
+       * @param {string} type - Tipo da mensagem ('success' ou 'error')
+       */
       function showMessage(text, type) {
         const box = document.getElementById("message-box");
         box.textContent = text;
@@ -1084,7 +1185,9 @@
         }, 5000);
       }
 
-      // Fechar dropdowns ao clicar fora
+      /**
+       * Event listener global para fechar dropdowns quando clicar fora deles
+       */
       window.onclick = function (event) {
         if (
           !event.target.matches(".dropdown-button") &&

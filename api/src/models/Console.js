@@ -1,7 +1,16 @@
+/**
+ * Model Console - Representa consolas de videojogos na base de dados
+ * Responsável por todas as operações relacionadas com a tabela 'consoles'
+ */
+
 const db = require("../config/database");
 
 class Console {
-  // GET - Listar todas as consolas
+  /**
+   * Obtém todas as consolas da base de dados
+   * @returns {Promise<Array>} Array de objetos console ordenados por nome
+   * @throws {Error} Erro de base de dados
+   */
   static async getAll() {
     try {
       const [rows] = await db.query(
@@ -13,7 +22,12 @@ class Console {
     }
   }
 
-  // GET - Obter consola por ID
+  /**
+   * Obtém uma consola específica pelo ID
+   * @param {number} id - ID da consola
+   * @returns {Promise<Object|null>} Objeto console ou null se não encontrado
+   * @throws {Error} Erro de base de dados
+   */
   static async getById(id) {
     try {
       const [rows] = await db.query("SELECT * FROM consoles WHERE id = ?", [
@@ -25,7 +39,13 @@ class Console {
     }
   }
 
-  // GET - Obter consolas de um jogo específico
+  /**
+   * Obtém todas as consolas associadas a um jogo específico
+   * Faz JOIN com a tabela jogo_consoles (relação M:N)
+   * @param {number} jogoId - ID do jogo
+   * @returns {Promise<Array>} Array de consolas do jogo
+   * @throws {Error} Erro de base de dados
+   */
   static async getByJogoId(jogoId) {
     try {
       const [rows] = await db.query(

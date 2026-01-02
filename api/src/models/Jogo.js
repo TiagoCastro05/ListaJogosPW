@@ -1,7 +1,28 @@
+/**
+ * Model Jogo - Operações de base de dados para jogos
+ * 
+ * Este model gere todas as operações CRUD (Create, Read, Update, Delete) 
+ * relacionadas com jogos, incluindo as relações many-to-many com consolas e géneros.
+ * Utiliza transações de base de dados para garantir a integridade dos dados.
+ */
+
 const db = require("../config/database");
 
 class Jogo {
-  // GET - Listar todos os jogos
+  /**
+   * Obtém todos os jogos da base de dados com filtros opcionais
+   * 
+   * Executa uma query com múltiplos JOINs para obter os jogos juntamente com 
+   * as suas consolas e géneros associados. Os resultados são agrupados por jogo
+   * e as consolas/géneros são concatenados numa string separada por vírgulas.
+   * 
+   * @param {Object} filters - Objeto com filtros opcionais
+   * @param {string} filters.title - Filtro por título (pesquisa parcial LIKE)
+   * @param {number} filters.year - Filtro por ano de lançamento (igualdade exata)
+   * @param {number} filters.minMetacritic - Filtro por rating mínimo Metacritic (>=)
+   * @returns {Promise<Array>} Array de objetos de jogos com consolas e géneros
+   * @throws {Error} Lança erro se a query falhar
+   */
   static async getAll(filters = {}) {
     try {
       let query = `
@@ -40,7 +61,17 @@ class Jogo {
     }
   }
 
-  // GET - Obter jogo por ID
+  /**
+   * Obtém um jogo específico pelo seu ID com todas as relações
+   * 
+   * Primeiro obtém os dados básicos do jogo, depois executa queries adicionais
+   * para obter as consolas e géneros associados através das tabelas de relação.
+   * Retorna um objeto completo com todos os dados e relações do jogo.
+   * 
+   * @param {number} id - ID do jogo a obter
+   * @returns {Promise<Object|null>} Objeto do jogo com arrays de consolas e géneros, ou null se não encontrado
+   * @throws {Error} Lança erro se a query falhar
+   */
   static async getById(id) {
     try {
       const [rows] = await db.query("SELECT * FROM jogos WHERE id = ?", [id]);
@@ -77,7 +108,24 @@ class Jogo {
     }
   }
 
-  // POST - Criar novo jogo
+  /**
+   * Cria um novo jogo na base de dados com as suas relações
+   * 
+   * Utiliza uma transação de base de dados para garantir que todas as operações
+   * são executadas com sucesso ou todas falham (atomicidade). Primeiro insere
+   * o jogo na tabela principal, depois insere as relações com consolas e géneros
+   * nas tabelas de junção many-to-many.
+   * 
+   * @param {Object} jogoData - Dados do novo jogo
+   * @param {string} jogoData.title - Título do jogo (obrigatório)
+   * @param {number} jogoData.metacritic_rating - Rating Metacritic (opcional)
+   * @param {number} jogoData.release_year - Ano de lançamento (opcional)
+   * @param {string} jogoData.game_image - URL da imagem do jogo (opcional)
+   * @param {Array<number>} jogoData.consoles - Array de IDs de consolas (opcional)
+   * @param {Array<number>} jogoData.genres - Array de IDs de géneros (opcional)
+   * @returns {Promise<number>} ID do jogo criado
+   * @throws {Error} Lança erro e faz rollback da transação se algo falhar
+   */
   static async create(jogoData) {
     const connection = await db.getConnection();
     try {
@@ -110,7 +158,25 @@ class Jogo {
 
       // Inserir relações com géneros
       if (jogoData.genres && jogoData.genres.length > 0) {
-        const genreValues = jogoData.genres.map((genreId) => [jogoId, genreId]);
+   **
+   * Atualiza um jogo existente e as suas relações
+   * 
+   * Utiliza uma transação para atualizar os dados básicos do jogo e substituir
+   * completamente as relações com consolas e géneros. Remove todas as relações
+   * antigas e insere as novas, garantindo que o estado final reflete exatamente
+   * os dados fornecidos.
+   * 
+   * @param {number} id - ID do jogo a atualizar
+   * @param {Object} jogoData - Novos dados do jogo (mesma estrutura que create)
+   * @param {string} jogoData.title - Título do jogo
+   * @param {number} jogoData.metacritic_rating - Rating Metacritic
+   * @param {number} jogoData.release_year - Ano de lançamento
+   * @param {string} jogoData.game_image - URL da imagem
+   * @param {Array<number>} jogoData.consoles - Array de IDs de consolas
+   * @param {Array<number>} jogoData.genres - Array de IDs de géneros
+   * @returns {Promise<boolean>} true se atualizado com sucesso
+   * @throws {Error} Lança erro e faz rollback da transação se algo falhar
+   */ = jogoData.genres.map((genreId) => [jogoId, genreId]);
         await connection.query(
           "INSERT INTO jogo_genres (jogo_id, genre_id) VALUES ?",
           [genreValues]
@@ -164,7 +230,17 @@ class Jogo {
       }
 
       // Inserir novas relações com géneros
-      if (jogoData.genres && jogoData.genres.length > 0) {
+   **
+   * Elimina um jogo e todas as suas relações da base de dados
+   * 
+   * Utiliza uma transação para garantir que tanto as relações (consolas e géneros)
+   * como o registo do jogo são eliminados. A ordem é importante: primeiro eliminam-se
+   * as relações nas tabelas de junção, depois o jogo principal.
+   * 
+   * @param {number} id - ID do jogo a eliminar
+   * @returns {Promise<boolean>} true se eliminado com sucesso, false se o jogo não existia
+   * @throws {Error} Lança erro e faz rollback da transação se algo falhar
+   */& jogoData.genres.length > 0) {
         const genreValues = jogoData.genres.map((genreId) => [id, genreId]);
         await connection.query(
           "INSERT INTO jogo_genres (jogo_id, genre_id) VALUES ?",
