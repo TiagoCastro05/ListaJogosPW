@@ -1,6 +1,6 @@
 /**
  * Controller Jogo - Lógica de negócio e gestão de pedidos HTTP para jogos
- * 
+ *
  * Este controller gere todos os endpoints relacionados com jogos, incluindo
  * validação de dados, tratamento de erros e formatação de respostas.
  * Atua como camada intermédia entre as routes e o model Jogo.
@@ -10,7 +10,7 @@ const Jogo = require("../models/Jogo");
 
 /**
  * GET /api/jogos - Obtém lista de todos os jogos com filtros opcionais
- * 
+ *
  * @param {Object} req.query.title - Filtro por título (pesquisa parcial)
  * @param {number} req.query.year - Filtro por ano de lançamento
  * @param {number} req.query.minMetacritic - Filtro por rating mínimo
@@ -41,7 +41,7 @@ exports.getAll = async (req, res) => {
 
 /**
  * GET /api/jogos/:id - Obtém um jogo específico pelo ID
- * 
+ *
  * @param {number} req.params.id - ID do jogo a obter
  * @returns {Object} JSON com success e dados do jogo (ou erro 404 se não encontrado)
  */
@@ -71,10 +71,10 @@ exports.getById = async (req, res) => {
 
 /**
  * POST /api/jogos - Cria um novo jogo
- * 
+ *
  * Valida que o título, consolas e géneros são fornecidos.
  * Após criação bem-sucedida, retorna o jogo completo com todas as relações.
- * 
+ *
  * @param {Object} req.body - Dados do novo jogo
  * @param {string} req.body.title - Título do jogo (obrigatório)
  * @param {Array<number>} req.body.consoles - IDs das consolas (obrigatório, mínimo 1)
@@ -120,16 +120,7 @@ exports.create = async (req, res) => {
     const jogoId = await Jogo.create(req.body);
     const novoJogo = await Jogo.getById(jogoId);
 
- **
- * PUT /api/jogos/:id - Atualiza um jogo existente
- * 
- * Valida que o jogo existe e que o título é fornecido.
- * Após atualização bem-sucedida, retorna o jogo atualizado com todas as relações.
- * 
- * @param {number} req.params.id - ID do jogo a atualizar
- * @param {Object} req.body - Novos dados do jogo (mesma estrutura que POST)
- * @returns {Object} JSON com success, message e dados atualizados (ou erro 404 se não encontrado)
- */
+    res.status(201).json({
       success: true,
       message: "Jogo criado com sucesso",
       data: novoJogo,
@@ -143,7 +134,16 @@ exports.create = async (req, res) => {
   }
 };
 
-// PUT /api/jogos/:id - Atualizar jogo
+/**
+ * PUT /api/jogos/:id - Atualiza um jogo existente
+ *
+ * Valida que o jogo existe e que o título é fornecido.
+ * Após atualização bem-sucedida, retorna o jogo atualizado com todas as relações.
+ *
+ * @param {number} req.params.id - ID do jogo a atualizar
+ * @param {Object} req.body - Novos dados do jogo (mesma estrutura que POST)
+ * @returns {Object} JSON com success, message e dados atualizados (ou erro 404 se não encontrado)
+ */
 exports.update = async (req, res) => {
   try {
     const {
@@ -180,15 +180,7 @@ exports.update = async (req, res) => {
       message: "Jogo atualizado com sucesso",
       data: jogoAtualizado,
     });
- **
- * DELETE /api/jogos/:id - Elimina um jogo
- * 
- * Valida que o jogo existe antes de eliminar.
- * Retorna os dados do jogo eliminado na resposta.
- * 
- * @param {number} req.params.id - ID do jogo a eliminar
- * @returns {Object} JSON com success, message e dados do jogo eliminado (ou erro 404 se não encontrado)
- */
+  } catch (error) {
     res.status(500).json({
       success: false,
       message: "Erro ao atualizar jogo",
@@ -197,7 +189,15 @@ exports.update = async (req, res) => {
   }
 };
 
-// DELETE /api/jogos/:id - Eliminar jogo
+/**
+ * DELETE /api/jogos/:id - Elimina um jogo
+ *
+ * Valida que o jogo existe antes de eliminar.
+ * Retorna os dados do jogo eliminado na resposta.
+ *
+ * @param {number} req.params.id - ID do jogo a eliminar
+ * @returns {Object} JSON com success, message e dados do jogo eliminado (ou erro 404 se não encontrado)
+ */
 exports.delete = async (req, res) => {
   try {
     // Verificar se o jogo existe

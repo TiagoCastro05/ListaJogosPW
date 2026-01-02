@@ -74,8 +74,8 @@ router.get("/", genreController.getAll);
  *         description: Género encontrado
  *       404:
  *         description: Género não encontrado
-// GET /api/genres/:id - Obter género específico pelo ID
  */
+// GET /api/genres/:id - Obter género específico pelo ID
 router.get("/:id", genreController.getById);
 
 module.exports = router;
